@@ -485,6 +485,396 @@ document.addEventListener('DOMContentLoaded', () => {
         photosGrid.appendChild(photo); emptyPhotos.classList.add('hidden'); photosGrid.classList.remove('hidden');
     });
 
+    // ===== VIDEO GENERATOR =====
+    const videoPrompt = document.getElementById('videoPrompt');
+    const btnGenerateVideo = document.getElementById('btnGenerateVideo');
+    const videosGrid = document.getElementById('videosGrid');
+    const emptyVideos = document.getElementById('emptyVideos');
+    const videoPlayerSection = document.getElementById('videoPlayerSection');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const playerInfo = document.getElementById('playerInfo');
+    const videoDropZone = document.getElementById('videoDropZone');
+    const videoUpload = document.getElementById('videoUpload');
+    let generatedVideos = [];
+
+    // Load saved videos
+    try { const sv = localStorage.getItem('novaia_videos'); if(sv) generatedVideos = JSON.parse(sv); renderVideos(); } catch(e) {}
+
+    // Video generation with canvas animation
+    function generateVideoCanvas(prompt, duration, style, resolution) {
+        const canvas = document.createElement('canvas');
+        const dims = { '16:9': [640, 360], '9:16': [360, 640], '1:1': [480, 480] };
+        const [w, h] = dims[resolution] || [640, 360];
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        const styleColors = {
+            cinematic: [['#0f0c29','#302b63','#24243e'],['stars','nebula','lightRays']],
+            anime: [['#ff6b9d','#c44569','#f8b500'],['particles','sparkle','speedLines']],
+            realistic: [['#2d3436','#636e72','#b2bec3'],['water','cloud','reflection']],
+            cartoon: [['#74b9ff','#a29bfe','#fd79a8'],['bubbles','rainbow','bounce']],
+            pixel: [['#00b894','#00cec9','#0984e3'],['pixelWave','grid','glitch']],
+            abstract: [['#fdcb6e','#e17055','#d63031'],['morph','kaleidoscope','flow']],
+            galaxy: [['#0a0a2e','#1a0533','#2d1b69'],['stars','spiral','glow']],
+            ocean: [['#006994','#00b4d8','#90e0ef'],['waves','foam','bubble']],
+            city: [['#2d3436','#6c5ce7','#a29bfe'],['buildings','lights','cars']],
+            flowers: [['#fd79a8','#e84393','#fab1a0'],['petals','bloom','grow']],
+            dragon: [['#2d3436','#d63031','#0984e3'],['fire','flight','mountains']],
+            music: [['#6c5ce7','#00cec9','#fd79a8'],['wave','bars','pulse']]
+        };
+
+        // Determine effect from prompt
+        const lowerPrompt = prompt.toLowerCase();
+        let effectKey = style;
+        if(lowerPrompt.includes('galax') || lowerPrompt.includes('espaço') || lowerPrompt.includes('estrela')) effectKey = 'galaxy';
+        else if(lowerPrompt.includes('mar') || lowerPrompt.includes('onda') || lowerPrompt.includes('praia')) effectKey = 'ocean';
+        else if(lowerPrompt.includes('cidade') || lowerPrompt.includes('futurista') || lowerPrompt.includes('prédio')) effectKey = 'city';
+        else if(lowerPrompt.includes('flor') || lowerPrompt.includes('desabroch')) effectKey = 'flowers';
+        else if(lowerPrompt.includes('drag') || lowerPrompt.includes('fogo')) effectKey = 'dragon';
+        else if(lowerPrompt.includes('música') || lowerPrompt.includes('som') || lowerPrompt.includes('onda')) effectKey = 'music';
+
+        const colors = styleColors[effectKey] || styleColors[style] || styleColors.cinematic;
+        const effects = colors[1];
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, colors[0][0]); gradient.addColorStop(0.5, colors[0][1]); gradient.addColorStop(1, colors[0][2]);
+
+        let frame = 0;
+        const totalFrames = Math.floor(duration * 30);
+        const fps = 30;
+        const stream = canvas.captureStream(fps);
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+        const chunks = [];
+        recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
+
+        return new Promise(resolve => {
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const dataUrl = URL.createObjectURL(blob);
+                resolve({ dataUrl, blob, prompt, style, duration, resolution });
+            };
+            recorder.start();
+
+            function drawFrame() {
+                const t = frame / totalFrames;
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, w, h);
+
+                // Draw animated effects
+                effects.forEach(effect => {
+                    ctx.save();
+                    switch(effect) {
+                        case 'stars':
+                            for(let i = 0; i < 50; i++) {
+                                const x = (Math.sin(i * 7.3 + t * 20) * 0.5 + 0.5) * w;
+                                const y = (Math.cos(i * 3.1 + t * 15) * 0.5 + 0.5) * h;
+                                const size = Math.sin(t * 10 + i) * 2 + 3;
+                                ctx.fillStyle = `rgba(255,255,255,${0.3 + Math.sin(t * 5 + i) * 0.3})`;
+                                ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
+                            }
+                            // Nebula
+                            for(let i = 0; i < 5; i++) {
+                                const cx = w * (0.3 + 0.4 * Math.sin(t * 3 + i));
+                                const cy = h * (0.3 + 0.4 * Math.cos(t * 2 + i));
+                                const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, 80 + Math.sin(t*4)*20);
+                                grd.addColorStop(0, `rgba(${100+i*30},${50+i*20},255,0.3)`);
+                                grd.addColorStop(1, 'rgba(0,0,0,0)');
+                                ctx.fillStyle = grd; ctx.fillRect(0,0,w,h);
+                            }
+                            break;
+                        case 'waves':
+                        case 'wave':
+                            for(let row = 0; row < 8; row++) {
+                                ctx.beginPath();
+                                for(let x = 0; x <= w; x += 5) {
+                                    const y = h * 0.3 + row * (h*0.08) + Math.sin(x * 0.02 + t * 20 + row) * 20;
+                                    x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                                }
+                                ctx.strokeStyle = `rgba(100,200,255,${0.5 - row * 0.05})`;
+                                ctx.lineWidth = 3; ctx.stroke();
+                            }
+                            break;
+                        case 'particles':
+                        case 'sparkle':
+                            for(let i = 0; i < 30; i++) {
+                                const x = (Math.sin(i * 5.7 + t * 30) * 0.5 + 0.5) * w;
+                                const y = ((i * 0.1 + t * 2) % 1) * h;
+                                const size = Math.random() * 4 + 2;
+                                ctx.fillStyle = `hsla(${(i * 30 + t * 200) % 360}, 80%, 70%, ${0.6 + Math.sin(t*8+i)*0.3})`;
+                                ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
+                            }
+                            break;
+                        case 'speedLines':
+                            for(let i = 0; i < 20; i++) {
+                                const x1 = Math.random() * w;
+                                const y1 = Math.random() * h;
+                                ctx.strokeStyle = `rgba(255,255,255,${Math.random()*0.3})`;
+                                ctx.lineWidth = Math.random() * 2;
+                                ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + Math.sin(t*10)*50, y1 + Math.cos(t*10)*50); ctx.stroke();
+                            }
+                            break;
+                        case 'buildings':
+                            for(let i = 0; i < 15; i++) {
+                                const bw = 20 + Math.sin(i*2.3)*10;
+                                const bh = 80 + Math.sin(i*1.7)*60;
+                                const bx = i * (w/15);
+                                ctx.fillStyle = `rgba(30,30,60,0.8)`;
+                                ctx.fillRect(bx, h-bh, bw, bh);
+                                // Windows
+                                for(let wy = h-bh+10; wy < h-10; wy += 15) {
+                                    for(let wx = bx+4; wx < bx+bw-4; wx += 10) {
+                                        if(Math.sin(wx*7+wy*3+t*20) > 0) {
+                                            ctx.fillStyle = `rgba(253,203,110,${0.5+Math.sin(t*5+wx)*0.3})`;
+                                            ctx.fillRect(wx, wy, 6, 8);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case 'lights':
+                        case 'cars':
+                            for(let i = 0; i < 8; i++) {
+                                const lx = ((t * 100 + i * 80) % (w + 100)) - 50;
+                                const ly = h * 0.7 + i * 15;
+                                ctx.fillStyle = `hsla(${(i*45+t*60)%360}, 80%, 60%, 0.7)`;
+                                ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI*2); ctx.fill();
+                                // Light trail
+                                ctx.strokeStyle = ctx.fillStyle;
+                                ctx.lineWidth = 2;
+                                ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx-30, ly); ctx.stroke();
+                            }
+                            break;
+                        case 'petals':
+                        case 'bloom':
+                        case 'grow':
+                            for(let i = 0; i < 12; i++) {
+                                const cx = w/2 + Math.cos(t*5+i)*100;
+                                const cy = h/2 + Math.sin(t*4+i)*80;
+                                const size = 15 + Math.sin(t*3+i)*10;
+                                ctx.fillStyle = `hsla(${300+i*20}, 70%, 65%, 0.6)`;
+                                for(let p = 0; p < 5; p++) {
+                                    const angle = (p/5)*Math.PI*2 + t*2;
+                                    ctx.beginPath();
+                                    ctx.ellipse(cx+Math.cos(angle)*size, cy+Math.sin(angle)*size, size*0.4, size*0.2, angle, 0, Math.PI*2);
+                                    ctx.fill();
+                                }
+                            }
+                            break;
+                        case 'fire':
+                        case 'flight':
+                            for(let i = 0; i < 25; i++) {
+                                const fx = w*0.6 + Math.sin(t*8+i)*60;
+                                const fy = h*0.5 - i*8 - Math.sin(t*12)*20;
+                                const fs = 8 + Math.sin(t*6+i)*4;
+                                const grd = ctx.createRadialGradient(fx, fy, 0, fx, fy, fs);
+                                grd.addColorStop(0, `rgba(255,${150-i*5},0,0.8)`);
+                                grd.addColorStop(0.5, `rgba(255,${50+i*3},0,0.4)`);
+                                grd.addColorStop(1, 'rgba(255,0,0,0)');
+                                ctx.fillStyle = grd; ctx.fillRect(fx-fs, fy-fs, fs*2, fs*2);
+                            }
+                            break;
+                        case 'mountains':
+                            ctx.fillStyle = 'rgba(20,20,40,0.7)';
+                            ctx.beginPath(); ctx.moveTo(0, h);
+                            for(let x = 0; x <= w; x += 10) {
+                                ctx.lineTo(x, h*0.6 + Math.sin(x*0.01)*40 + Math.sin(x*0.03)*20);
+                            }
+                            ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+                            // Snow caps
+                            ctx.fillStyle = 'rgba(200,220,255,0.3)';
+                            ctx.beginPath(); ctx.moveTo(0, h);
+                            for(let x = 0; x <= w; x += 10) {
+                                const mtY = h*0.6 + Math.sin(x*0.01)*40 + Math.sin(x*0.03)*20;
+                                ctx.lineTo(x, mtY + 15);
+                            }
+                            ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+                            break;
+                        case 'bars':
+                        case 'pulse':
+                            for(let i = 0; i < 20; i++) {
+                                const barH = (Math.sin(t*15+i*2)*0.5+0.5) * h * 0.6 + 20;
+                                const bx = (i+1) * (w/22);
+                                const by = h - barH - 20;
+                                const grd = ctx.createLinearGradient(bx, by+barH, bx, by);
+                                grd.addColorStop(0, `hsla(${(i*18+t*100)%360},80%,50%,0.8)`);
+                                grd.addColorStop(1, `hsla(${(i*18+t*100)%360},80%,80%,0.9)`);
+                                ctx.fillStyle = grd;
+                                ctx.fillRect(bx, by, w/25, barH);
+                            }
+                            break;
+                        case 'nebula':
+                        case 'lightRays':
+                            const cx2 = w/2, cy2 = h/2;
+                            for(let i = 0; i < 8; i++) {
+                                const angle = t * 3 + (i/8) * Math.PI * 2;
+                                const len = 150 + Math.sin(t*5+i)*30;
+                                ctx.strokeStyle = `rgba(200,180,255,${0.1+Math.sin(t*3+i)*0.05})`;
+                                ctx.lineWidth = 20 + Math.sin(t*4+i)*10;
+                                ctx.beginPath(); ctx.moveTo(cx2, cy2);
+                                ctx.lineTo(cx2+Math.cos(angle)*len, cy2+Math.sin(angle)*len);
+                                ctx.stroke();
+                            }
+                            break;
+                        case 'rainbow':
+                        case 'bubbles':
+                        case 'bounce':
+                            for(let i = 0; i < 15; i++) {
+                                const bx2 = (Math.sin(i*3+t*8)*0.4+0.5)*w;
+                                const by2 = (Math.cos(i*2+t*5)*0.4+0.5)*h;
+                                const bs = 15+Math.sin(t*4+i)*8;
+                                const grd2 = ctx.createRadialGradient(bx2-bs*0.3, by2-bs*0.3, 0, bx2, by2, bs);
+                                grd2.addColorStop(0, `hsla(${(i*24+t*60)%360},80%,70%,0.7)`);
+                                grd2.addColorStop(1, `hsla(${(i*24+t*60)%360},80%,70%,0.1)`);
+                                ctx.fillStyle = grd2; ctx.beginPath(); ctx.arc(bx2, by2, bs, 0, Math.PI*2); ctx.fill();
+                            }
+                            break;
+                        case 'pixelWave':
+                        case 'grid':
+                        case 'glitch':
+                            const gridSize = 20;
+                            for(let gx = 0; gx < w; gx += gridSize) {
+                                for(let gy = 0; gy < h; gy += gridSize) {
+                                    const v = Math.sin(gx*0.05+t*10)*Math.cos(gy*0.05+t*8);
+                                    if(v > 0.3) {
+                                        ctx.fillStyle = `hsla(${(v*360+t*100)%360},80%,50%,${v})`;
+                                        ctx.fillRect(gx, gy, gridSize-1, gridSize-1);
+                                    }
+                                }
+                            }
+                            break;
+                        case 'morph':
+                        case 'kaleidoscope':
+                        case 'flow':
+                            for(let i = 0; i < 6; i++) {
+                                ctx.save();
+                                ctx.translate(w/2, h/2);
+                                ctx.rotate(t * 2 + (i/6) * Math.PI * 2);
+                                const grd3 = ctx.createRadialGradient(0, 0, 0, 0, 0, 150);
+                                grd3.addColorStop(0, `hsla(${(i*60+t*120)%360},80%,60%,0.4)`);
+                                grd3.addColorStop(1, 'rgba(0,0,0,0)');
+                                ctx.fillStyle = grd3;
+                                ctx.beginPath(); ctx.ellipse(0, 0, 150, 50, 0, 0, Math.PI*2); ctx.fill();
+                                ctx.restore();
+                            }
+                            break;
+                        default:
+                            // Default: floating circles
+                            for(let i = 0; i < 10; i++) {
+                                const cx3 = (Math.sin(t*3+i*2)*0.4+0.5)*w;
+                                const cy3 = (Math.cos(t*2+i*3)*0.4+0.5)*h;
+                                const cs = 30+Math.sin(t+i)*15;
+                                ctx.fillStyle = `rgba(108,92,231,${0.2+Math.sin(t*2+i)*0.1})`;
+                                ctx.beginPath(); ctx.arc(cx3, cy3, cs, 0, Math.PI*2); ctx.fill();
+                            }
+                    }
+                    ctx.restore();
+                });
+
+                // Center text overlay
+                ctx.fillStyle = 'rgba(255,255,255,0.85)';
+                ctx.font = `bold ${Math.min(w,h)/10}px Arial`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
+                const shortPrompt = prompt.length > 30 ? prompt.substring(0, 30) + '...' : prompt;
+                ctx.fillText(shortPrompt, w/2, h/2);
+                ctx.font = `${Math.min(w,h)/20}px Arial`;
+                ctx.fillText(`${style.charAt(0).toUpperCase()+style.slice(1)} • ${t.toFixed(1)}s / ${duration}s`, w/2, h/2 + Math.min(w,h)/8);
+                ctx.shadowBlur = 0;
+
+                frame++;
+                if(frame < totalFrames) requestAnimationFrame(drawFrame);
+                else { recorder.stop(); }
+            }
+            drawFrame();
+        });
+    }
+
+    btnGenerateVideo.addEventListener('click', async () => {
+        const prompt = videoPrompt.value.trim();
+        if(!prompt) { videoPrompt.style.borderColor='#ff6b6b'; setTimeout(()=>videoPrompt.style.borderColor='var(--border)',2000); return; }
+        const duration = parseInt(document.getElementById('videoDuration').value);
+        const style = document.getElementById('videoStyle').value;
+        const resolution = document.getElementById('videoResolution').value;
+        const quality = document.getElementById('videoQuality').value;
+
+        // Show loading state
+        btnGenerateVideo.disabled = true;
+        btnGenerateVideo.textContent = '⏳ Gerando vídeo... Aguarda aí!';
+
+        try {
+            const video = await generateVideoCanvas(prompt, duration, style, resolution);
+            generatedVideos.push({ ...video, quality, date: new Date().toISOString(), id: Date.now() });
+            try { localStorage.setItem('novaia_videos', JSON.stringify(generatedVideos.slice(-20))); } catch(e) {}
+            renderVideos();
+            videoPrompt.value = '';
+        } catch(err) {
+            console.error('Erro ao gerar vídeo:', err);
+        }
+
+        btnGenerateVideo.disabled = false;
+        btnGenerateVideo.textContent = '🎬 Gerar Vídeo';
+    });
+
+    function renderVideos() {
+        videosGrid.innerHTML = '';
+        if(generatedVideos.length === 0) { emptyVideos.classList.remove('hidden'); videosGrid.classList.add('hidden'); return; }
+        emptyVideos.classList.add('hidden'); videosGrid.classList.remove('hidden');
+        generatedVideos.forEach((v, i) => {
+            const item = document.createElement('div');
+            item.className = 'video-item';
+            item.innerHTML = `
+                <video src="${v.dataUrl}" muted preload="metadata"></video>
+                <div class="video-item-overlay">
+                    <button class="video-play-btn" data-index="${i}">▶</button>
+                    <button class="video-download-btn" data-index="${i}" title="Download">⬇️</button>
+                </div>
+                <div class="video-item-info">
+                    <span class="video-item-prompt" title="${v.prompt}">${v.prompt}</span>
+                    <span class="video-item-meta">${v.duration}s • ${v.quality} • ${v.style}</span>
+                </div>
+            `;
+            const thumbVideo = item.querySelector('video');
+            thumbVideo.addEventListener('loadeddata', () => { thumbVideo.currentTime = 1; });
+            item.querySelector('.video-play-btn').addEventListener('click', () => playVideo(i));
+            item.querySelector('.video-download-btn').addEventListener('click', () => {
+                const a = document.createElement('a'); a.href = v.dataUrl; a.download = `nova-ia-video-${i}.webm`; a.click();
+            });
+            videosGrid.appendChild(item);
+        });
+    }
+
+    function playVideo(index) {
+        const v = generatedVideos[index];
+        if(!v) return;
+        videoPlayer.src = v.dataUrl;
+        videoPlayerSection.classList.remove('hidden');
+        playerInfo.textContent = `${v.prompt} | ${v.duration}s | ${v.quality} | ${v.style}`;
+        videoPlayer.play();
+        videoPlayerSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Video templates
+    document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            videoPrompt.value = btn.dataset.prompt;
+            btnGenerateVideo.click();
+        });
+    });
+
+    // Video upload
+    videoDropZone.addEventListener('click', () => videoUpload.click());
+    videoDropZone.addEventListener('dragover', e => { e.preventDefault(); videoDropZone.style.borderColor = 'var(--accent)'; });
+    videoDropZone.addEventListener('dragleave', () => { videoDropZone.style.borderColor = 'var(--border)'; });
+    videoDropZone.addEventListener('drop', e => { e.preventDefault(); videoDropZone.style.borderColor = 'var(--border)'; handleVideoFiles(e.dataTransfer.files); });
+    videoUpload.addEventListener('change', e => handleVideoFiles(e.target.files));
+
+    function handleVideoFiles(files) {
+        Array.from(files).forEach(f => {
+            if(!f.type.startsWith('video/')) return;
+            const dataUrl = URL.createObjectURL(f);
+            generatedVideos.push({ dataUrl, prompt: f.name, style: 'upload', duration: Math.round(f.size/1000000), quality: 'original', date: new Date().toISOString(), id: Date.now() });
+            renderVideos();
+        });
+    }
+
     // Init
     updateSendButton();
 });

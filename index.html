@@ -121,6 +121,10 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     <span>Câmera</span>
                 </button>
+                <button class="nav-btn" data-section="video" title="Gerador de Vídeo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                    <span>🎬 Vídeo</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -435,6 +439,104 @@ console.log('Bora codar! 💜');"></textarea>
                         <div class="empty-photos" id="emptyPhotos">
                             <div class="empty-icon">📷</div>
                             <p>Nenhuma foto ainda. Liga a câmera e tira uma!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== VIDEO GENERATOR SECTION ===== -->
+            <section class="content-section" id="section-video">
+                <div class="section-header">
+                    <h2>🎬 Gerador de Vídeo</h2>
+                    <p class="section-subtitle">Cria vídeos com IA a partir de texto ou imagens! 🎥✨</p>
+                </div>
+                <div class="video-workspace">
+                    <div class="video-generator">
+                        <h3>Gerar Vídeo com IA</h3>
+                        <p class="video-desc">Descreve o vídeo que tu quer e a IA cria pra você! 🚀</p>
+                        <div class="generator-input">
+                            <textarea id="videoPrompt" placeholder="Ex: Um gato dançando numa pista de dança futurista com luzes neon..." rows="3"></textarea>
+                            <div class="video-options">
+                                <div class="option-group">
+                                    <label>Duração:</label>
+                                    <select id="videoDuration">
+                                        <option value="4">4 segundos</option>
+                                        <option value="8" selected>8 segundos</option>
+                                        <option value="16">16 segundos</option>
+                                    </select>
+                                </div>
+                                <div class="option-group">
+                                    <label>Qualidade:</label>
+                                    <select id="videoQuality">
+                                        <option value="720p">720p HD</option>
+                                        <option value="1080p" selected>1080p Full HD</option>
+                                        <option value="4k">4K Ultra HD</option>
+                                    </select>
+                                </div>
+                                <div class="option-group">
+                                    <label>Estilo:</label>
+                                    <select id="videoStyle">
+                                        <option value="cinematic">Cinematográfico</option>
+                                        <option value="anime">Anime</option>
+                                        <option value="realistic">Realista</option>
+                                        <option value="cartoon">Cartoon</option>
+                                        <option value="pixel">Pixel Art</option>
+                                        <option value="abstract">Abstrato</option>
+                                    </select>
+                                </div>
+                                <div class="option-group">
+                                    <label>Resolução:</label>
+                                    <select id="videoResolution">
+                                        <option value="16:9">16:9 (Paisagem)</option>
+                                        <option value="9:16">9:16 (Vertical/Reels)</option>
+                                        <option value="1:1">1:1 (Quadrado)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn-generate" id="btnGenerateVideo">🎬 Gerar Vídeo</button>
+                        </div>
+                    </div>
+
+                    <!-- Video Upload -->
+                    <div class="video-upload-area">
+                        <h3>📁 Upload de Vídeo</h3>
+                        <div class="drop-zone video-drop-zone" id="videoDropZone">
+                            <div class="drop-icon">🎥</div>
+                            <p>Arrasta vídeos aqui ou clica pra selecionar</p>
+                            <p class="drop-sub">MP4, WebM, MOV até 100MB</p>
+                            <input type="file" id="videoUpload" accept="video/*" hidden>
+                        </div>
+                    </div>
+
+                    <!-- Generated Videos Gallery -->
+                    <div class="video-gallery">
+                        <h3>🎞️ Seus Vídeos</h3>
+                        <div class="videos-grid" id="videosGrid"></div>
+                        <div class="empty-videos" id="emptyVideos">
+                            <div class="empty-icon">🎬</div>
+                            <p>Nenhum vídeo ainda. Gera ou faz upload!</p>
+                        </div>
+                    </div>
+
+                    <!-- Video Templates -->
+                    <div class="video-templates">
+                        <h3>⚡ Templates Rápidos</h3>
+                        <div class="templates-grid">
+                            <button class="template-btn" data-prompt="Uma galáxia girando com estrelas brilhantes e nebulosas coloridas">🌌 Galáxia Espacial</button>
+                            <button class="template-btn" data-prompt="Ondas do mar quebrando numa praia tropical ao pôr do sol">🌊 Ondas do Mar</button>
+                            <button class="template-btn" data-prompt="Uma cidade futurista com carros voadores e prédios de vidro">🏙️ Cidade Futurista</button>
+                            <button class="template-btn" data-prompt="Flores desabrochando em câmera lenta com cores vibrantes">🌸 Flores Animadas</button>
+                            <button class="template-btn" data-prompt="Um dragão voando sobre montanhas nevadas com fogo azul">🐉 Dragão Épico</button>
+                            <button class="template-btn" data-prompt="Ondas de som coloridas sincronizadas com música eletrônica">🎵 Música Visual</button>
+                        </div>
+                    </div>
+
+                    <!-- Video Player -->
+                    <div class="video-player-section hidden" id="videoPlayerSection">
+                        <h3>▶️ Player</h3>
+                        <div class="video-player-container">
+                            <video id="videoPlayer" controls playsinline></video>
+                            <div class="player-info" id="playerInfo"></div>
                         </div>
                     </div>
                 </div>
