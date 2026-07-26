@@ -1,5 +1,3 @@
-// ===== Nova IA - App JavaScript v3.0 (Fun Edition) =====
-
 document.addEventListener('DOMContentLoaded', () => {
     // ===== PERMISSIONS SCREEN =====
     const permissionsScreen = document.getElementById('permissionsScreen');
@@ -7,23 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle');
     const btnAllowPermissions = document.getElementById('btnAllowPermissions');
 
-    // Check if already accepted
-    if (localStorage.getItem('novaia_permissions_accepted') === 'true') {
+    if (localStorage.getItem('potiguar_permissions_accepted') === 'true') {
         permissionsScreen.classList.add('hidden');
         appContainer.classList.remove('hidden');
     }
 
     btnAllowPermissions.addEventListener('click', () => {
-        // Save permissions
         const perms = {};
         document.querySelectorAll('.permission-item').forEach(item => {
             const cb = item.querySelector('.perm-checkbox');
             perms[item.dataset.perm] = cb.checked;
         });
-        localStorage.setItem('novaia_permissions', JSON.stringify(perms));
-        localStorage.setItem('novaia_permissions_accepted', 'true');
+        localStorage.setItem('potiguar_permissions', JSON.stringify(perms));
+        localStorage.setItem('potiguar_permissions_accepted', 'true');
 
-        // Animate transition
         permissionsScreen.style.transition = 'opacity 0.5s ease';
         permissionsScreen.style.opacity = '0';
         setTimeout(() => {
@@ -39,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const navBtns = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.content-section');
     const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarOverlay = document.createElement('div');
+    sidebarOverlay.className = 'sidebar-overlay hidden';
+    sidebarOverlay.id = 'sidebarOverlay';
+    document.body.appendChild(sidebarOverlay);
 
     navBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -71,7 +69,43 @@ document.addEventListener('DOMContentLoaded', () => {
     menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
     sidebarOverlay.addEventListener('click', closeSidebar);
 
-    // ===== CHAT =====
+    // ===== TABS SYSTEM =====
+    function initTabs(containerSelector, tabClass, contentPrefix) {
+        const tabBtns = document.querySelectorAll(`${containerSelector} .${tabClass}`);
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const container = btn.closest('.content-section, .section-header');
+                const parent = btn.parentElement;
+                parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                const target = document.getElementById(btn.dataset.tab);
+                if (target) target.classList.add('active');
+            });
+        });
+    }
+
+    // Tab buttons in futebol section
+    document.querySelectorAll('.tabs-futebol .tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tabs-futebol .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.getElementById(btn.dataset.tab)?.classList.add('active');
+        });
+    });
+
+    // Tab buttons in criacao section
+    document.querySelectorAll('.tabs-criacao .tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tabs-criacao .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.getElementById(btn.dataset.tab)?.classList.add('active');
+        });
+    });
+
+    // ===== CHAT / AMIGO DE VERDADE =====
     const messageInput = document.getElementById('messageInput');
     const btnSend = document.getElementById('btnSend');
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -81,49 +115,135 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const funResponses = {
         greetings: {
-            patterns: [/ol[áa]/i, /bom (dia|tarde|noite)/i, /oi/i, /hey/i, /hello/i, /eai/i, /e a[íi]/i],
+            patterns: [/ol[áa]/i, /bom (dia|tarde|noite)/i, /oi/i, /hey/i, /hello/i, /eai/i, /e a[íi]/i, /salve/i, /opa/i, /falas/i],
             responses: [
-                "Opa! Fala tu! 😄 O que manda hoje?",
-                "E aí, beleza? Tô aqui pra te ajudar no que precisar! 🚀",
-                "Fala aí! Nova IA na área, pronta pra ação! 💜",
-                "Salve! Que bom te ver por aqui! Bora resolver algo? 😎"
+                "Oxe! Fala tu! 😄 O que manda hoje, meu parceiro?",
+                "E aí, beleza? O Potiguar IA tá na área! 🦞",
+                "Fala aí! Tô aqui pra te ajudar no que precisar! 🚀",
+                "Opa! Que bom te ver por aqui! Bora resolver algo? 😎",
+                "Salve! Potiguar IA no comando! O que tu quer? 🦞"
             ]
         },
         identity: {
             patterns: [/quem (é|e) voc[eê]/i, /o que voc[eê] (é|e)/i, /seu nome/i, /como te chama/i],
             responses: [
-                "Sou a Nova IA, tua parceira de jornada! Chat, código, fotos, bola... eu faço de tudo (menos fazer café ☕😂). Como posso ajudar?",
-                "Meu nome é Nova IA! Sou um app completo com chat, editor de código, projetos, imagens, câmera e tutorial de bola. Basicamente, sou a navalha suíça dos apps! 🔥"
+                "Sou o Potiguar IA! 🦞 Teu parceiro de todas as horas — chat, futebol, jogos, programação, criação, culinária... eu faço de tudo (menos fazer café ☕😂).",
+                "Meu nome é Potiguar IA! Sou um app completo com futebol, jogos, programação, criação, culinária, imagens e câmera. Basicamente, sou anavalha suíça do Nordeste! 🔥"
             ]
         },
-        bola: {
-            patterns: [/bola/i, /futebol/i, /jogar/i, /chutar/i, /gol/i, /campo/i, /jogo/i],
+        piadas: {
+            patterns: [/piada/i, /engra[cç]ad/i, /rir/i, /humor/i, /comedi/i, /risada/i],
             responses: [
-                "⚽ Ôpa! Bora falar de bola? Vai na seção **Jogar Bola** no menu lateral que tem um tutorial completo com 6 passos pra você virar craque! Tem quiz também pra testar seus conhecimentos!",
-                "Futebol é vida, meu parceiro! Vai na aba **⚽ Jogar Bola** que tem dicas de ouro, curiosidades e um quiz. Bora se tornar o próximo Messi? 😂⚽"
+                "Lá vai: Por que o potiguar não joga xadrez? Porque ele prefere jogar bola! 😂⚽",
+                "Piada rápida: O que o açaí disse pro bolinho de goma? 'Bora pro pote!' 🫐😂",
+                "Por que o potiguar levou um mapa pra praia? Porque ele queria achar o caminho do mar! 😂🏖️",
+                "Qual é o cúmulo da tecnologia no RN? Um celular que faz tapioca! 😅🫓",
+                "O que o frango a potiguar disse pro caranguejo? 'Para de andar de lado!' 😂🦞",
+                "Piada de potiguar: Por que o caranguejo é bom em programação? Porque ele anda de lado e nunca vai reto! 🦞💻"
             ]
         },
-        programming: {
+        adivinhas: {
+            patterns: [/adivinh/i, /charada/i, /enigma/i, /adivinha/i],
+            responses: [
+                "🤔 Adivinha: O que é, o que é? Tem boca mas não fala, tem cama mas não dorme. Resposta: O rio! 😄",
+                "🤔 O que é, o que é? Quanto mais se tira, maior fica. Resposta: O buraco! 😂",
+                "🤔 Adivinha: O que é que sobe e nunca desce? Resposta: A idade! 🎂",
+                "🤔 O que é, o que é? Tem coroa mas não é rei, tem dente mas não é animal. Resposta: O alho! 🧄",
+                "🤔 Adivinha: O que é que está no meio do Rio de Janeiro? Resposta: A letra 'I'! 😄",
+                "🤔 O que é, o que é? Quanto mais quente, mais frio fica. Resposta: A pimenta! 🌶️"
+            ]
+        },
+        cantadas: {
+            patterns: [/cantada/i, /cantar/i, /paquerar/i, /conquist/i],
+            responses: [
+                "😏 Lá vai: Você é açaí? Porque sem você, meu dia não tem graça!",
+                "😏 Essa é boa: Se beleza fosse crime, você pegaria prisão perpétua!",
+                "😏 Ó: Você é tapioca? Porque eu quero te recheear de carinho!",
+                "😏 Vai essa: Seu sorriso é igual Carne de Sol — impossível de resistir!",
+                "😏 Ô: Você é o Maracanã? Porque todo mundo quer entrar em você! 😂⚽",
+                "😏 Potiguar style: Você é caranguejo? Porque me pegou pelas pinças!"
+            ]
+        },
+        fluminense: {
+            patterns: [/fluminense/i, /flu/i],
+            responses: [
+                "O Fluminense é o Tricolor das Laranjeiras! Fundado em 1902, tem a melhor academia de futebol do Brasil. Jogadores como Fred, Ganso e Thiago Silva brilharam lá! 🤍🩵❤️"
+            ]
+        },
+        flamengo: {
+            patterns: [/flamengo/i, /mengao/i, /meng[ãa]o/i, /rubro/i, /gabigol/i, /arrascaeta/i, /pedro/i],
+            responses: [
+                "🔴⚫ O MENGÃO! O maior do Brasil! 40+ milhões de torcedores, 3 Libertadores, 1 Mundial, e o Zico como maior ídolo! O Gabigol na final de 2019 foi ÉPICO! UMA VEZ FLAMENGO, SEMPRE FLAMENGO! 🔥",
+                "Flamengo é paixão! O Maracanã treme quando o Mengão joga. Gabigol, Arrascaeta, Pedro, Bruno Henrique... o elenco é monstro! O Fla é gigante! 🔴⚫"
+            ]
+        },
+        vasco: {
+            patterns: [/vasco/i, /cruz/i, /s[ãa]o jan/i],
+            responses: [
+                "O Vasco da Gama! O Clube de Regatas! Gigante da Colina, 4x campeão brasileiro, campeão da Libertadores 1998! Romário foi ídolo lá! O Vasco nunca desiste! ⚫⚪"
+            ]
+        },
+        botafogo: {
+            patterns: [/botafogo/i, /fogo/i, /estrela sol/i],
+            responses: [
+                "Botafogo! A Estrela Solitária brilha forte! Fundado em 1894, tem a maior torcida do Rio depois de Flamengo e Vasco. Garrincha, Nílton Santos... lendas eternas! ⚫🤍"
+            ]
+        },
+        corinthians: {
+            patterns: [/corinthians/i, /tim[ãa]o/i],
+            responses: [
+                "Corinthians! A Fiel Torcida! 30+ milhões de torcedores, campeão do mundo 2000 e 2012! O Timão nunca desiste! Cassio, Cássio, Younis... ídolos eternos! ⚫⚪"
+            ]
+        },
+        palmeiras: {
+            patterns: [/palmeiras/i, /verd[ãa]o/i],
+            responses: [
+                "Palmeiras! O Verdão! Campeão do mundo 1999, 12x campeão brasileiro! Endrick foi revelado lá. O Palmeiras é gigante do futebol brasileiro! 🟢⚪"
+            ]
+        },
+        vini: {
+            patterns: [/vini/i, /vin[ií]/i, /vinicius/i, /vinici/i],
+            responses: [
+                "⭐ VINI JÚNIOR! O craque brasileiro que tá dominando o Real Madrid! Bola de Ouro 2024, 2x Champions League, e o cara mais ousado do futebol mundial! Revelado pelo Flamengo, orgulho do Brasil! 🇧🇷⚽",
+                "O Vini Jr é fenômeno! Velocidade, drible, irreverência... ele joga como se estivesse se divertindo! E joga muito! O Real Madrid tem um tesouro brasileiro! 🌟"
+            ]
+        },
+        jogos: {
+            patterns: [/jogo/i, /game/i, /free fire/i, /blox fruit/i, /roblox/i, /fortnite/i],
+            responses: [
+                "🎮 Vai na seção **Jogos** no menu! Tem dicas de ouro de Free Fire, truques de Blox Fruits, ajuda com Roblox e estratégias de Fortnite! Tudo que tu precisa pra mandar bem! 🕹️",
+                "Gamer de verdade! Vai na aba **🎮 Jogos** que tem dicas completas de todos os jogos que tu curte! Bora dominar o leaderboard! 🏆"
+            ]
+        },
+        programacao: {
             patterns: [/programa[cç][aã]o/i, /c[óo]digo/i, /python/i, /javascript/i, /html/i, /css/i, /desenvolv/i],
             responses: [
-                "💻 Programação é o futuro, meu parceiro! Vai na aba **Programação** no menu que tem um editor completo de HTML, CSS e JS com preview ao vivo. Tem até 10 exemplos prontos, incluindo um jogo de cobra! 🐍",
-                "Bora codar! Na seção **Programação** tem um editor maneiro com preview em tempo real. Clica nos exemplos e vê a mágica acontecer! ✨"
+                "💻 Programação é o futuro! Vai na aba **Programação** que tem um editor completo com preview ao vivo. Tem até 10 exemplos prontos, incluindo um jogo de cobra! 🐍",
+                "Bora codar! Na seção **💻 Programação** tem um editor maneiro com preview em tempo real. Clica nos exemplos e vê a mágica acontecer! ✨"
             ]
         },
-        projects: {
-            patterns: [/projeto/i, /gest[ãa]o/i, /organizar/i, /salvar/i],
+        culinaria: {
+            patterns: [/comida/i, /receita/i, /a[cç]a[ií]/i, /leite ninho/i, /tapioca/i, /carne de sol/i, /culin/i, /cozinha/i],
             responses: [
-                "📁 Na seção **Projetos** você pode criar e guardar suas ideias! Clica em '+ Novo Projeto' e bora organizar tudo. Funciona até offline!"
+                "🍴 Comida boa é no Potiguar IA! Vai na seção **Coisas da Terra** que tem receitas de açaí, leite ninho, tapioca, carne de sol, bolinho de goma e cajuzinho! Tudo típico do RN! 🦞",
+                "Oxe! Fome de quê? Na aba **🍴 Coisas da Terra** tem receitas potiguaras autênticas! Açaí, carne de sol, bolinho de goma... bora cozinhar! 👨‍🍳"
             ]
         },
-        images: {
+        criacao: {
+            patterns: [/letra/i, /m[úu]sica/i, /rima/i, /cantada/i, /cursiva/i, /escreve/i, /poesia/i],
+            responses: [
+                "✍️ Vai na seção **Criação**! Lá tem gerador de letras de música, rimas, cantadas e prática de letra cursiva! É criatividade sem limites! 🎵",
+                "Criação é com o Potiguar IA! Na aba **✍️ Criação** tu gera letras, rimas, cantadas e pratica letra cursiva! Bora criar! 🖊️"
+            ]
+        },
+        imagens: {
             patterns: [/imagem/i, /foto/i, /gerar/i, /criar/i, /arte/i, /visual/i],
             responses: [
-                "🎨 Vai na seção **Imagens**! Lá você gera imagens com diferentes estilos, faz upload e organiza sua galeria. É tipo um estúdio de arte no bolso!"
+                "🖼️ Vai na seção **Imagens**! Lá você gera imagens com diferentes estilos, faz upload e organiza sua galeria. É tipo um estúdio de arte no bolso! 🎨"
             ]
         },
         camera: {
-            patterns: [/c[âa]mera/i, /foto/i, /captur/i, /tirar/i],
+            patterns: [/c[âa]mera/i, /captur/i, /tirar/i, /fotografia/i],
             responses: [
                 "📷 A seção **Câmera** tá te esperando! Liga a câmera e tira fotos direto pelo app. Funciona com a câmera frontal e traseira!"
             ]
@@ -131,30 +251,21 @@ document.addEventListener('DOMContentLoaded', () => {
         thanks: {
             patterns: [/obrigad/i, /valeu/i, /thanks/i, /agrade[cç]o/i, /brigad/i],
             responses: [
-                "De nada, meu parceiro! Tô sempre aqui! Qualquer coisa, é só chamar! 😄✨",
+                "De nada, meu parceiro! Tô sempre aqui! Qualquer coisa, é só chamar! 😄🦞",
                 "Valeu tu! Fico feliz em ajudar! Volta sempre que precisar! 🙌",
-                "Tamo junto! Qualquer dúvida, já sabe: Nova IA na área! 💜"
+                "Tamo junto! Potiguar IA nunca te abandona! 💪"
             ]
         },
-        funny: {
-            patterns: [/piada/i, /engra[cç]ad/i, /rir/i, /humor/i, /comedi/i],
+        ajuda: {
+            patterns: [/ajuda/i, /help/i, /como (uso|funciona)/i, /como (posso|fa[cç]o)/i, /menu/i],
             responses: [
-                "Tá bom, vai uma piada de dev: Por que o programador foi ao oftalmologista? Porque ele não conseguia C# (ver) 😂",
-                "Piada rápida: O que o zero disse pro oito? 'Belo cinto!' 😂",
-                "Lá vai: Por que o JavaScript não vai à praia? Porque ele tem medo de NaN (nadando) 🏖️😂",
-                "Uma piada pra você: Qual é o cúmulo da tecnologia? Um celular que não carrega! 😅"
-            ]
-        },
-        help: {
-            patterns: [/ajuda/i, /help/i, /como (uso|funciona)/i, /como (posso|fa[cç]o)/i],
-            responses: [
-                "Claro que te ajudo! Aqui estão as minhas habilidades:\n\n• 💬 **Chat IA** — Converse comigo sobre qualquer coisa\n• ⚽ **Jogar Bola** — Tutorial completo de futebol com quiz\n• 💻 **Programação** — Editor de código HTML/CSS/JS com preview\n• 📁 **Projetos** — Gerencie suas ideias e projetos\n• 🖼️ **Imagens** — Gere e organize imagens\n• 📷 **Câmera** — Tire fotos pelo app\n\nÉ só navegar pelo menu lateral! 🚀"
+                "Claro que te ajudo! Aqui estão as minhas habilidades:\n\n• 🤝 **Amigo de Verdade** — Converse comigo, piadas, adivinhas, cantadas\n• ⚽ **Futebol** — Narrações, Flamengo, Vini Jr, dicas de jogo, quiz de times\n• 🎮 **Jogos** — Dicas de Free Fire, Blox Fruits, Roblox, Fortnite\n• 💻 **Programação** — Editor de código HTML/CSS/JS com preview\n• ✍️ **Criação** — Letras de música, rimas, cantadas, letra cursiva\n• 🍴 **Coisas da Terra** — Receitas típicas do RN\n• 🖼️ **Imagens** — Gere e organize imagens\n• 📷 **Câmera** — Tire fotos pelo app\n\nÉ só navegar pelo menu lateral! 🚀"
             ]
         },
         default: [
-            "Hmm, interessante! 🤔 Posso te ajudar com chat, código, projetos, imagens, câmera ou até te ensinar a jogar bola! O que te interessa?",
-            "Beleza! Tô aqui pra ajudar no que precisar. Quer conversar sobre programação, futebol, projetos ou qualquer outra coisa? 😄",
-            "Boa! Pode contar comigo! Se quiser, dá uma olhada nas seções do menu — tem de tudo um pouco. Ou se preferir, me conta mais sobre o que precisa! 💜"
+            "Hmm, interessante! 🤔 Posso te ajudar com futebol, jogos, programação, criação, culinária, imagens ou câmera! O que te interessa?",
+            "Beleza! Tô aqui pra ajudar no que precisar. Quer conversar sobre qualquer coisa? Me conta! 😄🦞",
+            "Boa! Pode contar comigo! Se quiser, dá uma olhada nas seções do menu — tem de tudo um pouco. Ou se preferir, me conta mais sobre o que precisa! 🦞"
         ]
     };
 
@@ -179,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const msg = document.createElement('div');
         msg.className = `message ${type}`;
         msg.innerHTML = `
-            <div class="message-avatar">${type === 'user' ? '😎' : '✦'}</div>
+            <div class="message-avatar">${type === 'user' ? '😎' : '🦞'}</div>
             <div>
                 <div class="message-content">${content.replace(/\n/g, '<br>').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</div>
                 <div class="message-time">${getTimeString()}</div>
@@ -228,64 +339,96 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => { messageInput.value = btn.dataset.prompt; updateSendButton(); sendMessage(); });
     });
 
-    // ===== BOLA / QUIZ =====
-    const quizQuestions = [
-        { q: "Quem ganhou a Copa do Mundo de 2022?", options: ["Brasil", "França", "Argentina", "Alemanha"], correct: 2 },
-        { q: "Quantos jogadores tem cada time em campo?", options: ["9", "10", "11", "12"], correct: 2 },
-        { q: "Quanto tempo dura uma partida oficial?", options: ["80 min", "90 min", "100 min", "120 min"], correct: 1 },
-        { q: "Qual país tem mais títulos de Copa do Mundo?", options: ["Alemanha", "Argentina", "Brasil", "Itália"], correct: 2 },
-        { q: "O que é um 'hat-trick'?", options: ["3 gols no jogo", "3 assistências", "3 defesas", "3 faltas"], correct: 0 },
-        { q: "Qual é o tamanho oficial de um campo de futebol?", options: ["90-120m x 45-90m", "100-110m x 64-75m", "80-100m x 50-60m", "150-200m x 100m"], correct: 1 },
-        { q: "Quem é conhecido como 'O Fenômeno'?", options: ["Messi", "Cristiano Ronaldo", "Ronaldo Nazário", "Neymar"], correct: 2 },
-        { q: "Qual é a punição por mão na bola dentro da área?", options: ["Falta simples", "Pênalti", "Cartão amarelo", "Escanteio"], correct: 1 }
+    // ===== FUTEBOL: NARRAÇÃO =====
+    const narracoes = {
+        flamengo: ["GOOOOL DO FLAMENGO! O Maracanã EXPLODIU! O Mengão não tem jeito! A torcida tá de pé, o estádio tá TREMENDO! É FLAMENGO, SENHOR! 🔴⚫", "GOOOOOL! O Flamengo é gigante! A Nação Rubro-Negra COMEMORA! Mais um gol pra história do Mengão! UMA VEZ FLAMENGO, SEMPRE FLAMENGO! 🔥"],
+        vasco: ["GOOOOL DO VASCO! A Cruz de Malta brilha no Maracanã! O Gigante da Colina mostrou sua força! VASCO VASCO VASCO! ⚫⚪", "GOOOL! O Vasco nunca desiste! A Fiel Torcida do Vasco COMEMORA! Mais um capítulo da história cruzmaltina! ⚫⚪"],
+        fluminense: ["GOOOOL DO FLU! O Tricolor das Laranjeiras balançou as redes! Fred estaria orgulhoso! FLU FLU FLU! 🤍🩵❤️", "GOOOL! O Fluminense é arte! O Verdinho tá de pé no Maracanã! Mais um gol pro Tricolor! 🩵🤍❤️"],
+        botafogo: ["GOOOOL DO BOTAFOGO! A Estrela Solitária brilha mais forte que nunca! O Fogo tá ON! ⚫🤍", "GOOOL! O Botafogo é história! Garrincha estaria sorrindo! Mais um gol pro Glorioso! ⚫🤍"],
+        corinthians: ["GOOOOL DO CORINTHIANS! A Fiel Torcida ENLOUQUECEU! O Timão não para! Corinthians é gigante! ⚫⚪", "GOOOL! O Timão tá ON! A Fiel tá de pé! Mais um gol pro Corinthians! Timão é raça! ⚫⚪"],
+        palmeiras: ["GOOOOL DO PALMEIRAS! O Verdão tá dominando! 12 títulos brasileiros e o Palmeiras não para! 🟢⚪", "GOOOL! O Palmeiras é campeão! O Verdão tá mostrando por que é gigante! Endrick estaria orgulhoso! 🟢⚪"],
+        santos: ["GOOOOL DO SANTOS! O Peixe tá vivo! A Vila Belmiro tá de pé! Santos é tradição! ⚫⚪", "GOOOL! O Santos é Pelé, é Neymar, é tradição! O Peixe tá ON! ⚫⚪"],
+        brasil: ["GOOOOL DO BRASIL! O Maracanã tá de pé! A Seleção Brasileira mostrou por que é PENTA! VERDE E AMARELO! 🇧🇷", "GOOOL! O BRASIL TÁ ON! A torcida tá COMEMORANDO! Mais um gol pra história do futebol brasileiro! 🇧🇷🔥"],
+        aleatorio: ["GOOOOOOOOOL! QUE JOGADA! O ESTÁDIO TÁ TREMENDO! A TORCIDA TÁ DE PÉ! ISSO É FUTEBOL! 🎉⚽", "GOOOOL! QUE GOL É ESSE! O JOGADOR TÁ VOANDO! A BOLA ENTROU NO ÂNGULO! IMPARÁVEL! 🎉⚽", "GOOOOOL! É GOL! É GOL! É GOL! O MARACANÃ EXPLODIU! QUE MOMENTO! 🎉⚽"]
+    };
+
+    document.getElementById('btnGerarNarracao')?.addEventListener('click', () => {
+        const time = document.getElementById('narracaoTime').value;
+        const narracaoList = narracoes[time] || narracoes.aleatorio;
+        const narracao = narracaoList[Math.floor(Math.random() * narracaoList.length)];
+        const result = document.getElementById('narracaoResult');
+        result.classList.remove('hidden');
+        result.innerHTML = `<div class="narracao-text">${narracao}</div>`;
+    });
+
+    // ===== FUTEBOL: QUIZ DE TIMES =====
+    const quizFutebolQuestions = [
+        { q: "Qual time é conhecido como 'O Mais Querido do Brasil'?", options: ["Vasco", "Flamengo", "Corinthians", "Palmeiras"], correct: 1 },
+        { q: "Quantos títulos de Copa do Mundo o Brasil tem?", options: ["4", "5", "6", "3"], correct: 1 },
+        { q: "Qual jogador é conhecido como 'O Fenômeno'?", options: ["Messi", "Cristiano Ronaldo", "Ronaldo Nazário", "Neymar"], correct: 2 },
+        { q: "Em qual ano o Flamengo ganhou a Libertadores pela primeira vez?", options: ["1979", "1981", "1983", "1985"], correct: 1 },
+        { q: "Qual time tem a maior torcida do Brasil?", options: ["Corinthians", "Palmeiras", "Flamengo", "São Paulo"], correct: 2 },
+        { q: "Onde nasceu Vinícius Júnior?", options: ["Rio de Janeiro", "São Paulo", "Salvador", "Fortaleza"], correct: 0 },
+        { q: "Qual é o estádio do Flamengo?", options: ["Arena Corinthians", "Maracanã", "Allianz Parque", "Mineirão"], correct: 1 },
+        { q: "Quantos jogadores tem cada time em campo no futebol?", options: ["9", "10", "11", "12"], correct: 2 },
+        { q: "Qual time é chamado de 'O Verdão'?", options: ["Fluminense", "Palmeiras", "Coritiba", "Ceará"], correct: 1 },
+        { q: "Quem é o maior artilheiro da história do futebol?", options: ["Pelé", "Messi", "CR7", "Romário"], correct: 0 },
+        { q: "Qual clube carioca é conhecido como 'Gigante da Colina'?", options: ["Flamengo", "Botafogo", "Vasco", "Fluminense"], correct: 2 },
+        { q: "Quantos minutos dura uma partida oficial de futebol?", options: ["80", "90", "100", "120"], correct: 1 },
     ];
 
-    let currentQuizIndex = 0;
-    const quizQuestionEl = document.getElementById('quizQuestion');
-    const quizOptionsEl = document.getElementById('quizOptions');
-    const quizResultEl = document.getElementById('quizResult');
-    const btnNextQuiz = document.getElementById('btnNextQuiz');
+    let quizFutebolIndex = 0;
+    let quizAcertos = 0;
+    let quizErros = 0;
+    const quizFutebolQuestionEl = document.getElementById('quizFutebolQuestion');
+    const quizFutebolOptionsEl = document.getElementById('quizFutebolOptions');
+    const quizFutebolResultEl = document.getElementById('quizFutebolResult');
+    const btnNextQuizFutebol = document.getElementById('btnNextQuizFutebol');
 
-    function loadQuizQuestion() {
-        const q = quizQuestions[currentQuizIndex % quizQuestions.length];
-        quizQuestionEl.textContent = q.q;
-        quizOptionsEl.innerHTML = '';
-        quizResultEl.classList.add('hidden');
-        btnNextQuiz.classList.add('hidden');
+    function loadQuizFutebol() {
+        const q = quizFutebolQuestions[quizFutebolIndex % quizFutebolQuestions.length];
+        quizFutebolQuestionEl.textContent = q.q;
+        quizFutebolOptionsEl.innerHTML = '';
+        quizFutebolResultEl.classList.add('hidden');
+        btnNextQuizFutebol.classList.add('hidden');
 
         q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
             btn.className = 'quiz-option';
             btn.textContent = opt;
             btn.dataset.index = i;
-            btn.addEventListener('click', () => handleQuizAnswer(i, q.correct));
-            quizOptionsEl.appendChild(btn);
+            btn.addEventListener('click', () => handleQuizFutebol(i, q.correct));
+            quizFutebolOptionsEl.appendChild(btn);
         });
     }
 
-    function handleQuizAnswer(selected, correct) {
-        const options = quizOptionsEl.querySelectorAll('.quiz-option');
+    function handleQuizFutebol(selected, correct) {
+        const options = quizFutebolOptionsEl.querySelectorAll('.quiz-option');
         options.forEach(opt => {
             opt.classList.add('disabled');
             if (parseInt(opt.dataset.index) === correct) opt.classList.add('correct');
             if (parseInt(opt.dataset.index) === selected && selected !== correct) opt.classList.add('wrong');
         });
 
-        quizResultEl.classList.remove('hidden');
+        quizFutebolResultEl.classList.remove('hidden');
         if (selected === correct) {
-            quizResultEl.className = 'quiz-result success';
-            quizResultEl.textContent = '🎉 Acertou! Mandou bem, craque!';
+            quizAcertos++;
+            quizFutebolResultEl.className = 'quiz-result success';
+            quizFutebolResultEl.textContent = '🎉 Acertou! Mandou bem, craque!';
         } else {
-            quizResultEl.className = 'quiz-result fail';
-            quizResultEl.textContent = '😅 Errou! Mas faz parte, bora pra próxima!';
+            quizErros++;
+            quizFutebolResultEl.className = 'quiz-result fail';
+            quizFutebolResultEl.textContent = '😅 Errou! Mas faz parte, bora pra próxima!';
         }
-        btnNextQuiz.classList.remove('hidden');
+        document.getElementById('quizAcertos').textContent = quizAcertos;
+        document.getElementById('quizErros').textContent = quizErros;
+        btnNextQuizFutebol.classList.remove('hidden');
     }
 
-    btnNextQuiz.addEventListener('click', () => { currentQuizIndex++; loadQuizQuestion(); });
-    loadQuizQuestion();
+    btnNextQuizFutebol?.addEventListener('click', () => { quizFutebolIndex++; loadQuizFutebol(); });
+    loadQuizFutebol();
 
-    // ===== PROGRAMMING =====
+    // ===== PROGRAMAÇÃO =====
     const editorTabs = document.querySelectorAll('.editor-tab');
     const codeEditors = document.querySelectorAll('.code-editor');
     const btnRunCode = document.getElementById('btnRunCode');
@@ -296,11 +439,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const codeSnippets = {
         html: {
-            basic: `<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n    <meta charset="UTF-8">\n    <title>Olá Mundo</title>\n</head>\n<body>\n    <h1>Olá, Mundo! 🌍</h1>\n    <p>Meu primeiro site maneiro!</p>\n</body>\n</html>`,
-            form: `<form id="myForm">\n    <h2>Cadastro</h2>\n    <label>Nome:</label>\n    <input type="text" placeholder="Seu nome" required>\n    <label>Email:</label>\n    <input type="email" placeholder="seu@email.com" required>\n    <label>Mensagem:</label>\n    <textarea placeholder="Sua mensagem..." rows="4"></textarea>\n    <button type="submit">Enviar</button>\n</form>\n<style>\n    body { font-family: Arial; padding: 20px; max-width: 400px; margin: 0 auto; }\n    label { display: block; margin-top: 10px; font-weight: bold; }\n    input, textarea { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }\n    button { margin-top: 16px; padding: 10px 20px; background: #6c5ce7; color: white; border: none; border-radius: 6px; cursor: pointer; }\n</style>`
+            basic: `<h1>Olá, Mundo! 🌍</h1>\n<p>Meu primeiro site maneiro!</p>`,
+            form: `<form>\n    <h2>Cadastro</h2>\n    <label>Nome:</label>\n    <input type="text" placeholder="Seu nome" required>\n    <label>Email:</label>\n    <input type="email" placeholder="seu@email.com" required>\n    <button type="submit">Enviar</button>\n</form>`
         },
         css: {
-            flexbox: `body { margin: 0; font-family: Arial; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }\n.container { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; padding: 20px; }\n.card { width: 200px; height: 150px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.3s; }\n.card:hover { transform: translateY(-8px); }\n.card:nth-child(1) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; }\n.card:nth-child(2) { background: linear-gradient(135deg, #00cec9, #81ecec); color: white; }\n.card:nth-child(3) { background: linear-gradient(135deg, #fd79a8, #fab1a0); color: white; }`,
+            flexbox: `body { margin: 0; font-family: Arial; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }\n.container { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; padding: 20px; }\n.card { width: 200px; height: 150px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: transform 0.3s; }\n.card:hover { transform: translateY(-8px); }\n.card:nth-child(1) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; }\n.card:nth-child(2) { background: linear-gradient(135deg, #00cec9, #81ecec); color: white; }\n.card:nth-child(3) { background: linear-gradient(135deg, #fd79a8, #fab1a0); color: white; }`,
             animation: `body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: #1a1a2e; font-family: Arial; }\n.animated-box { width: 100px; height: 100px; background: linear-gradient(135deg, #6c5ce7, #fd79a8); border-radius: 20px; animation: float 3s ease-in-out infinite, rotate 6s linear infinite; }\n@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }\n@keyframes rotate { 0% { border-radius: 20px; } 50% { border-radius: 50%; } 100% { border-radius: 20px; } }`
         },
         js: {
@@ -308,10 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
             dom: `const container = document.createElement('div');\ncontainer.style.cssText = 'text-align:center; padding:40px; font-family:Arial;';\nconst title = document.createElement('h1');\ntitle.textContent = '🎯 Manipulação DOM';\ntitle.style.color = '#6c5ce7';\nconst btn = document.createElement('button');\nbtn.textContent = 'Clique aqui!';\nbtn.style.cssText = 'padding:12px 24px; background:#6c5ce7; color:white; border:none; border-radius:8px; cursor:pointer; font-size:16px;';\nlet count = 0;\nbtn.onclick = () => { count++; title.textContent = '🎯 Você clicou ' + count + ' vez' + (count > 1 ? 'es' : '') + '!'; };\ncontainer.appendChild(title);\ncontainer.appendChild(btn);\ndocument.body.appendChild(container);`
         },
         full: {
-            card: { html: `<div class="card">\n    <div class="card-image">🖼️</div>\n    <div class="card-body">\n        <h3>Título do Card</h3>\n        <p>Descrição do card com informações relevantes.</p>\n        <button class="btn">Saiba mais</button>\n    </div>\n</div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f0f0; font-family: Arial; }\n.card { width: 300px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }\n.card-image { height: 180px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; font-size: 48px; }\n.card-body { padding: 20px; }\n.card-body h3 { margin: 0 0 8px; color: #333; }\n.card-body p { color: #666; font-size: 14px; line-height: 1.5; }\n.btn { margin-top: 12px; padding: 8px 20px; background: #6c5ce7; color: white; border: none; border-radius: 6px; cursor: pointer; }` },
-            todo: { html: `<div id="app">\n    <h1>📝 Todo List</h1>\n    <div class="input-group">\n        <input id="taskInput" placeholder="Nova tarefa..." />\n        <button id="addBtn">Adicionar</button>\n    </div>\n    <ul id="taskList"></ul>\n    <p id="counter">0 tarefas</p>\n</div>`, css: `body { font-family: Arial; max-width: 400px; margin: 40px auto; padding: 0 20px; background: #f8f9fa; }\nh1 { color: #6c5ce7; }\n.input-group { display: flex; gap: 8px; margin: 16px 0; }\ninput { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }\nbutton { padding: 10px 16px; background: #6c5ce7; color: white; border: none; border-radius: 8px; cursor: pointer; }\nul { list-style: none; padding: 0; }\nli { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; margin: 4px 0; border-radius: 8px; }\nli.done span { text-decoration: line-through; color: #aaa; }\nli .delete { margin-left: auto; color: #ff6b6b; cursor: pointer; }\n#counter { color: #666; font-size: 13px; }`, js: `const input = document.getElementById('taskInput');\nconst addBtn = document.getElementById('addBtn');\nconst taskList = document.getElementById('taskList');\nconst counter = document.getElementById('counter');\nlet tasks = [];\nfunction render() {\n    taskList.innerHTML = '';\n    tasks.forEach((task, i) => {\n        const li = document.createElement('li');\n        li.className = task.done ? 'done' : '';\n        li.innerHTML = '<span>' + task.text + '</span><span class="delete">✕</span>';\n        li.querySelector('span').onclick = () => { tasks[i].done = !tasks[i].done; render(); };\n        li.querySelector('.delete').onclick = () => { tasks.splice(i, 1); render(); };\n        taskList.appendChild(li);\n    });\n    counter.textContent = tasks.length + ' tarefa' + (tasks.length !== 1 ? 's' : '');\n}\naddBtn.onclick = () => { if (input.value.trim()) { tasks.push({ text: input.value.trim(), done: false }); input.value = ''; render(); } };\ninput.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });` },
-            calculator: { html: `<div class="calc">\n    <div class="display" id="display">0</div>\n    <div class="buttons">\n        <button class="btn op" onclick="clearDisplay()">C</button>\n        <button class="btn op" onclick="appendOp('%')">%</button>\n        <button class="btn op" onclick="appendOp('/')">÷</button>\n        <button class="btn" onclick="appendNum('7')">7</button>\n        <button class="btn" onclick="appendNum('8')">8</button>\n        <button class="btn" onclick="appendNum('9')">9</button>\n        <button class="btn op" onclick="appendOp('*')">×</button>\n        <button class="btn" onclick="appendNum('4')">4</button>\n        <button class="btn" onclick="appendNum('5')">5</button>\n        <button class="btn" onclick="appendNum('6')">6</button>\n        <button class="btn op" onclick="appendOp('-')">−</button>\n        <button class="btn" onclick="appendNum('1')">1</button>\n        <button class="btn" onclick="appendNum('2')">2</button>\n        <button class="btn" onclick="appendNum('3')">3</button>\n        <button class="btn op" onclick="appendOp('+')">+</button>\n        <button class="btn zero" onclick="appendNum('0')">0</button>\n        <button class="btn" onclick="appendNum('.')">.</button>\n        <button class="btn eq" onclick="calculate()">=</button>\n    </div>\n</div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #1a1a2e; font-family: Arial; }\n.calc { width: 300px; background: #2d2d44; border-radius: 20px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }\n.display { background: #1a1a2e; color: white; font-size: 36px; text-align: right; padding: 16px; border-radius: 12px; margin-bottom: 16px; min-height: 60px; }\n.buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }\n.btn { padding: 16px; font-size: 18px; border: none; border-radius: 12px; cursor: pointer; background: #3d3d5c; color: white; transition: 0.2s; }\n.btn:hover { background: #4d4d6c; }\n.btn.op { background: #6c5ce7; }\n.btn.op:hover { background: #7f70f0; }\n.btn.eq { background: #00cec9; }\n.btn.zero { grid-column: span 2; }`, js: `let expression = '';\nconst display = document.getElementById('display');\nfunction appendNum(n) { expression += n; updateDisplay(); }\nfunction appendOp(op) { expression += op; updateDisplay(); }\nfunction clearDisplay() { expression = ''; display.textContent = '0'; }\nfunction updateDisplay() { display.textContent = expression || '0'; }\nfunction calculate() { try { let result = Function('"use strict"; return (' + expression + ')')(); expression = String(result); display.textContent = expression; } catch(e) { display.textContent = 'Erro'; expression = ''; } }` },
-            game: { html: `<div class="game-container">\n    <h1>🐍 Snake Game</h1>\n    <canvas id="gameCanvas" width="400" height="400"></canvas>\n    <p>Use as setas do teclado pra jogar!</p>\n    <p id="score">Pontos: 0</p>\n    <button onclick="startGame()">Iniciar / Reiniciar</button>\n</div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #1a1a2e; font-family: Arial; color: white; }\n.game-container { text-align: center; }\ncanvas { border: 2px solid #6c5ce7; border-radius: 8px; background: #0f0f0f; display: block; margin: 16px auto; }\nbutton { padding: 10px 24px; background: #6c5ce7; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }\n#score { font-size: 18px; color: #a29bfe; }`, js: `const canvas = document.getElementById('gameCanvas');\nconst ctx = canvas.getContext('2d');\nconst scoreEl = document.getElementById('score');\nconst size = 20;\nlet snake, food, dir, nextDir, gameLoop, score;\nfunction init() { snake = [{x:10,y:10}]; dir={x:1,y:0}; nextDir=dir; score=0; placeFood(); scoreEl.textContent='Pontos: '+score; }\nfunction placeFood() { food = {x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; }\nfunction draw() { ctx.fillStyle='#0f0f0f'; ctx.fillRect(0,0,400,400); snake.forEach((s,i)=>{ctx.fillStyle=i===0?'#6c5ce7':'#a29bfe';ctx.fillRect(s.x*size+1,s.y*size+1,size-2,size-2);}); ctx.fillStyle='#ff6b6b'; ctx.fillRect(food.x*size+1,food.y*size+1,size-2,size-2); }\nfunction update() { dir=nextDir; const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y}; if(head.x<0||head.x>=20||head.y<0||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)){clearInterval(gameLoop);alert('Game Over! Pontos: '+score);return;} snake.unshift(head); if(head.x===food.x&&head.y===food.y){score++;scoreEl.textContent='Pontos: '+score;placeFood();}else snake.pop(); draw(); }\ndocument.addEventListener('keydown',e=>{const map={ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0}};if(map[e.key]&&(map[e.key].x+dir.x!==0||map[e.key].y+dir.y!==0))nextDir=map[e.key];});\nfunction startGame(){clearInterval(gameLoop);init();draw();gameLoop=setInterval(update,120);}\ninit();draw();` }
+            card: { html: `<div class="card"><div class="card-image">🖼️</div><div class="card-body"><h3>Título do Card</h3><p>Descrição do card com informações relevantes.</p><button class="btn">Saiba mais</button></div></div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f0f0; font-family: Arial; }\n.card { width: 300px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }\n.card-image { height: 180px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display: flex; align-items: center; justify-content: center; font-size: 48px; }\n.card-body { padding: 20px; }\n.card-body h3 { margin: 0 0 8px; color: #333; }\n.card-body p { color: #666; font-size: 14px; line-height: 1.5; }\n.btn { margin-top: 12px; padding: 8px 20px; background: #6c5ce7; color: white; border: none; border-radius: 6px; cursor: pointer; }` },
+            todo: { html: `<div id="app"><h1>📝 Todo List</h1><div class="input-group"><input id="taskInput" placeholder="Nova tarefa..." /><button id="addBtn">Adicionar</button></div><ul id="taskList"></ul><p id="counter">0 tarefas</p></div>`, css: `body { font-family: Arial; max-width: 400px; margin: 40px auto; padding: 0 20px; background: #f8f9fa; }\nh1 { color: #6c5ce7; }\n.input-group { display: flex; gap: 8px; margin: 16px 0; }\ninput { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }\nbutton { padding: 10px 16px; background: #6c5ce7; color: white; border: none; border-radius: 8px; cursor: pointer; }\nul { list-style: none; padding: 0; }\nli { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; margin: 4px 0; border-radius: 8px; }\nli.done span { text-decoration: line-through; color: #aaa; }\nli .delete { margin-left: auto; color: #ff6b6b; cursor: pointer; }\n#counter { color: #666; font-size: 13px; }`, js: `const input = document.getElementById('taskInput');\nconst addBtn = document.getElementById('addBtn');\nconst taskList = document.getElementById('taskList');\nconst counter = document.getElementById('counter');\nlet tasks = [];\nfunction render() {\n    taskList.innerHTML = '';\n    tasks.forEach((task, i) => {\n        const li = document.createElement('li');\n        li.className = task.done ? 'done' : '';\n        li.innerHTML = '<span>' + task.text + '</span><span class="delete">✕</span>';\n        li.querySelector('span').onclick = () => { tasks[i].done = !tasks[i].done; render(); };\n        li.querySelector('.delete').onclick = () => { tasks.splice(i, 1); render(); };\n        taskList.appendChild(li);\n    });\n    counter.textContent = tasks.length + ' tarefa' + (tasks.length !== 1 ? 's' : '');\n}\naddBtn.onclick = () => { if (input.value.trim()) { tasks.push({ text: input.value.trim(), done: false }); input.value = ''; render(); } };\ninput.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });` },
+            calculator: { html: `<div class="calc"><div class="display" id="display">0</div><div class="buttons"><button class="btn op" onclick="clearDisplay()">C</button><button class="btn op" onclick="appendOp('%')">%</button><button class="btn op" onclick="appendOp('/')">÷</button><button class="btn" onclick="appendNum('7')">7</button><button class="btn" onclick="appendNum('8')">8</button><button class="btn" onclick="appendNum('9')">9</button><button class="btn op" onclick="appendOp('*')">×</button><button class="btn" onclick="appendNum('4')">4</button><button class="btn" onclick="appendNum('5')">5</button><button class="btn" onclick="appendNum('6')">6</button><button class="btn op" onclick="appendOp('-')">−</button><button class="btn" onclick="appendNum('1')">1</button><button class="btn" onclick="appendNum('2')">2</button><button class="btn" onclick="appendNum('3')">3</button><button class="btn op" onclick="appendOp('+')">+</button><button class="btn zero" onclick="appendNum('0')">0</button><button class="btn" onclick="appendNum('.')">.</button><button class="btn eq" onclick="calculate()">=</button></div></div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #1a1a2e; font-family: Arial; }\n.calc { width: 300px; background: #2d2d44; border-radius: 20px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }\n.display { background: #1a1a2e; color: white; font-size: 36px; text-align: right; padding: 16px; border-radius: 12px; margin-bottom: 16px; min-height: 60px; }\n.buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }\n.btn { padding: 16px; font-size: 18px; border: none; border-radius: 12px; cursor: pointer; background: #3d3d5c; color: white; transition: 0.2s; }\n.btn:hover { background: #4d4d6c; }\n.btn.op { background: #6c5ce7; }\n.btn.eq { background: #00cec9; }\n.btn.zero { grid-column: span 2; }`, js: `let expression = '';\nconst display = document.getElementById('display');\nfunction appendNum(n) { expression += n; updateDisplay(); }\nfunction appendOp(op) { expression += op; updateDisplay(); }\nfunction clearDisplay() { expression = ''; display.textContent = '0'; }\nfunction updateDisplay() { display.textContent = expression || '0'; }\nfunction calculate() { try { let result = Function('"use strict"; return (' + expression + ')')(); expression = String(result); display.textContent = expression; } catch(e) { display.textContent = 'Erro'; expression = ''; } }` },
+            game: { html: `<div class="game-container"><h1>🐍 Snake Game</h1><canvas id="gameCanvas" width="400" height="400"></canvas><p>Use as setas do teclado pra jogar!</p><p id="score">Pontos: 0</p><button onclick="startGame()">Iniciar / Reiniciar</button></div>`, css: `body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #1a1a2e; font-family: Arial; color: white; }\n.game-container { text-align: center; }\ncanvas { border: 2px solid #6c5ce7; border-radius: 8px; background: #0f0f0f; display: block; margin: 16px auto; }\nbutton { padding: 10px 24px; background: #6c5ce7; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }\n#score { font-size: 18px; color: #a29bfe; }`, js: `const canvas = document.getElementById('gameCanvas');\nconst ctx = canvas.getContext('2d');\nconst scoreEl = document.getElementById('score');\nconst size = 20;\nlet snake, food, dir, nextDir, gameLoop, score;\nfunction init() { snake = [{x:10,y:10}]; dir={x:1,y:0}; nextDir=dir; score=0; placeFood(); scoreEl.textContent='Pontos: '+score; }\nfunction placeFood() { food = {x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}; }\nfunction draw() { ctx.fillStyle='#0f0f0f'; ctx.fillRect(0,0,400,400); snake.forEach((s,i)=>{ctx.fillStyle=i===0?'#6c5ce7':'#a29bfe';ctx.fillRect(s.x*size+1,s.y*size+1,size-2,size-2);}); ctx.fillStyle='#ff6b6b'; ctx.fillRect(food.x*size+1,food.y*size+1,size-2,size-2); }\nfunction update() { dir=nextDir; const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y}; if(head.x<0||head.x>=20||head.y<0||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)){clearInterval(gameLoop);alert('Game Over! Pontos: '+score);return;} snake.unshift(head); if(head.x===food.x&&head.y===food.y){score++;scoreEl.textContent='Pontos: '+score;placeFood();}else snake.pop(); draw(); }\ndocument.addEventListener('keydown',e=>{const map={ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0}};if(map[e.key]&&(map[e.key].x+dir.x!==0||map[e.key].y+dir.y!==0))nextDir=map[e.key];});\nfunction startGame(){clearInterval(gameLoop);init();draw();gameLoop=setInterval(update,120);}\ninit();draw();` }
         }
     };
 
@@ -360,46 +503,164 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ===== PROJECTS =====
-    let projects = [];
-    const projectsGrid = document.getElementById('projectsGrid');
-    const emptyProjects = document.getElementById('emptyProjects');
-    const btnAddProject = document.getElementById('btnAddProject');
-    const projectModal = document.getElementById('projectModal');
-    const projectName = document.getElementById('projectName');
-    const projectDesc = document.getElementById('projectDesc');
-    const projectTech = document.getElementById('projectTech');
-    const projectTags = document.getElementById('projectTags');
+    // ===== CRIAÇÃO: LETRAS DE MÚSICA =====
+    const letrasMusicas = {
+        sertanejo: {
+            amor: ["Eu vi você passando na estrada\nE meu coração ficou acelerado\nComo a chuva que cai na caatinga\nMeu amor por você não tem medida\n\nÔ, minha morena, vem cá\nQue eu quero te dizer que te amo demais\nNessa noite de lua cheia\nMeu coração só pensa em te encontrar", "Meu sertão é mais bonito quando você tá aqui\nComo a flor que nasce depois da chuva\nMeu amor é como o rio que não para\nSempre correndo na direção do seu sorriso"],
+            amizade: ["Meu parceiro, meu irmão\nNessa estrada da vida sempre a mão\nComo o caranguejo que caminha de lado\nA amizade é forte e nunca vai mudar", "Companheiro de todas as horas\nComo o vento que sopra no sertão\nA nossa amizade é como o açaí\nDoce, forte e nunca acaba"]
+        },
+        funk: {
+            amor: ["Ela é tipo açaí com granola\nCombinação perfeita, não tem igual\nQuando ela dança, o mundo para\nE eu fico preso nesse baile de amor\n\nÔ, vem cá, vem cá\nQue eu quero te mostrar o que é bom\nNessa noite de verão\nO nosso amor vai bater o som", "Ela chegou no baile\nTodos os olhos voltaram pra ela\nTipo leite ninho derretendo\nMeu coração tá querendo ela"],
+            amizade: ["Meu parceiro de baile\nSempre junto, sempre na mesma vibe\nComo o beat que não para\nA nossa amizade é favela"]
+        },
+        rap: {
+            amor: ["Na quebrada eu cresci, sem nada\nMas teu olhar mudou minha história\nComo o caranguejo que luta pro mar\nEu luto todos os dias pelo teu sorriso\n\nMeu amor é tipo açaí\nDoce na primeira vez, viciante pra sempre\nNesse jogo da vida, você é meu prêmio\nE eu jogo pra ganhar, não pra perder", "Da favela pro mundo inteiro\nMeu amor é como o Rio\nNunca para, nunca acaba\nE eu vou te amar até o fim"],
+            amizade: ["Meus brothers da quebrada\nSempre juntos, nunca separados\nComo o batidão que não para\nA nossa amizade é eterna"]
+        },
+        pop: {
+            amor: ["Você é como o sol da manhã\nIlumina tudo que toca\nMeu coração bate mais forte\nQuando você está perto de mim\n\nOh, você é meu universo\nCada estrela brilha por nós\nNessa noite de sonhos\nNosso amor vai além do céu", "Meu amor é como uma onda\nSobe, desce, mas nunca para\nVocê é minha melodia\nE eu sou sua harmonia perfeita"],
+            amizade: ["Amigos pra vida inteira\nComo uma canção que não acaba\nCada momento juntos\nÉ um hit que fica na memória"]
+        },
+        mpb: {
+            amor: ["Como a brisa do mar em Natal\nMeu amor por você é natural\nComo a areia branca da praia\nSuave, puro, sem igual\n\nOh, meu bem, vem comigo\nVamos dançar ao som do vento\nNosso amor é como o céu do sertão\nInfinito e sem fim", "Meu amor é como o capim\nCresce forte, não precisa de muito\nBasta um pouco de carinho\nE floresce pra sempre"],
+            amizade: ["Amizade é como o rio Poti\nCorre livre, sem pressa\nMas nunca para de fluir\nE alimenta tudo ao redor"]
+        },
+        gospel: {
+            amor: ["Deus abençoou meu caminho\nQuando te colocou na minha vida\nComo a luz que brilha no escuro\nSeu amor ilumina minha alma\n\nOh, Senhor, obrigado\nPor me dar esse presente\nMeu amor é um reflexo\nDo teu amor infinito", "Meu amor vem do céu\nComo a graça que nos alcança\nJuntos caminhamos na fé\nE o amor nos guia sempre"],
+            amizade: ["Irmãos em Cristo\nCaminhando juntos na fé\nComo o pastor guia seu rebanho\nNossa amizade é abençoada"]
+        }
+    };
 
-    function loadProjects() { const s = localStorage.getItem('novaia_projects'); if(s) projects = JSON.parse(s); renderProjects(); }
-    function saveProjects() { localStorage.setItem('novaia_projects', JSON.stringify(projects)); }
+    document.getElementById('btnGerarLetra')?.addEventListener('click', () => {
+        const tema = document.getElementById('letraTema').value.trim().toLowerCase() || 'amor';
+        const estilo = document.getElementById('letraEstilo').value;
+        const letras = letrasMusicas[estilo]?.[tema] || letrasMusicas[estilo]?.['amor'] || letrasMusicas.sertanejo['amor'];
+        const letra = letras[Math.floor(Math.random() * letras.length)];
+        const result = document.getElementById('letraResult');
+        result.classList.remove('hidden');
+        result.innerHTML = `<div class="letra-text"><h4>🎵 ${estilo.charAt(0).toUpperCase() + estilo.slice(1)} — ${tema.charAt(0).toUpperCase() + tema.slice(1)}</h4><pre>${letra}</pre></div>`;
+    });
 
-    function renderProjects() {
-        projectsGrid.innerHTML = '';
-        if (projects.length === 0) { emptyProjects.classList.remove('hidden'); projectsGrid.classList.add('hidden'); return; }
-        emptyProjects.classList.add('hidden'); projectsGrid.classList.remove('hidden');
-        const icons = { html: '🌐', react: '⚛️', python: '🐍', node: '🟢', mobile: '📱', other: '📦' };
-        projects.forEach((p, i) => {
-            const card = document.createElement('div');
-            card.className = 'project-card';
-            card.innerHTML = `<div class="project-card-header"><div class="project-icon">${icons[p.tech]||'📦'}</div><h4>${p.name}</h4></div><p>${p.desc||'Sem descrição'}</p><div class="project-tags">${(p.tags||[]).map(t=>`<span class="project-tag">${t.trim()}</span>`).join('')}<span class="project-tag">${p.tech}</span></div>`;
-            card.addEventListener('dblclick', () => { if(confirm('Excluir este projeto?')) { projects.splice(i,1); saveProjects(); renderProjects(); }});
-            projectsGrid.appendChild(card);
-        });
+    // ===== CRIAÇÃO: RIMAS =====
+    const rimasDB = {
+        'amor': ['dor', 'cor', 'flor', 'calor', 'sabor', 'valor', 'humor', 'terror', 'primor', 'fervor'],
+        'vida': ['comida', 'decida', 'medida', 'ferida', 'partida', 'subida', 'descida', 'sentida', 'corrida', 'acendida'],
+        'coração': ['mão', 'pão', 'chão', 'madrugada não', 'verão', 'limão', 'feijão', 'carnaval', 'irmão', 'verão'],
+        'sol': ['farol', 'lençol', 'lençol', 'carrossel', 'papel', 'pincel', 'pastel', 'quintal', 'local', 'cristal'],
+        'lua': ['rua', 'nua', 'cua', 'tua', 'flutua', 'atua', 'avalia', 'continua', 'perpetua', 'tua'],
+        'noite': ['gente', 'brilhante', 'distante', 'instante', 'importante', 'bastante', 'constante', 'reluzente', 'suave', 'calma'],
+        'praia': ['praia', 'alegria', 'fantasia', 'melodia', 'harmonia', 'poesia', 'galeria', 'sinfonia', 'maria', 'alegria'],
+        'amigo': ['abrigo', 'consigo', 'antigo', 'contigo', 'inimigo', 'perigo', 'sigo', 'trigo', 'figo', 'abrigo'],
+        'fogo': ['fogo', 'logo', 'jogo', 'ago', 'cego', 'cego', 'cego', 'cego', 'cego', 'cego'],
+        'flamengo': ['tempo', 'exemplo', 'sempre', 'sempre', 'campo', 'lampada', 'sempre', 'preto', 'preto', 'vermelho'],
+        'açaí': ['aqui', 'eu vi', 'ali', 'senti', 'fugiu', 'partiu', 'caiu', 'surgiu', 'seguir', 'sorrir'],
+        'tapioca': ['rica', 'bica', 'pica', 'mica', 'rica', 'rica', 'rica', 'rica', 'rica', 'rica'],
+    };
+
+    document.getElementById('btnGerarRimas')?.addEventListener('click', () => {
+        const palavra = document.getElementById('rimaPalavra').value.trim().toLowerCase();
+        const result = document.getElementById('rimasResult');
+        
+        if (!palavra) {
+            result.classList.add('hidden');
+            return;
+        }
+
+        const rimas = rimasDB[palavra] || gerarRimasGenericas(palavra);
+        result.classList.remove('hidden');
+        result.innerHTML = `
+            <div class="rimas-list">
+                <h4>🔤 Rimas para "${palavra}":</h4>
+                <div class="rimas-tags">
+                    ${rimas.map(r => `<span class="rima-tag">${r}</span>`).join('')}
+                </div>
+                <p class="rimas-dica">💡 Use essas rimas pra criar suas próprias músicas e poemas!</p>
+            </div>
+        `;
+    });
+
+    function gerarRimasGenericas(palavra) {
+        const terminacoes = ['ão', 'ar', 'er', 'ir', 'or', 'al', 'el', 'ar', 'ão', 'ez'];
+        const rimas = [];
+        const sufixos = {
+            'ão': ['mão', 'chão', 'pão', 'verão', 'limão', 'feijão', 'irmão', 'sabiá'],
+            'ar': ['mar', 'lar', 'cantar', 'dançar', 'sonhar', 'amar', 'brilhar', 'voar'],
+            'er': ['poder', 'querer', 'crescer', 'aprender', 'compreender', 'vencer', 'encontro', 'luz'],
+            'ir': ['sorrir', 'fugir', 'partir', 'seguir', 'sentir', 'existir', 'resistir', 'sorrir'],
+            'or': ['amor', 'calor', 'sabor', 'flor', 'valor', 'humor', 'cor', 'primor'],
+            'al': ['festival', 'cristal', 'portal', 'natural', 'brutal', 'sinal', 'animal', 'local'],
+            'el': ['papel', 'pastel', 'pincel', 'farol', 'hotel', 'pastel', 'pastel', 'pastel'],
+            'ez': ['felicidade', 'beleza', 'pureza', 'natureza', 'tristeza', 'certeza', 'beleza', 'firmeza'],
+        };
+        const ending = palavra.slice(-2);
+        rimas.push(...(sufixos[ending] || sufixos['ão']));
+        return rimas.slice(0, 10);
     }
 
-    btnAddProject.addEventListener('click', () => { projectModal.classList.remove('hidden'); projectName.value=''; projectDesc.value=''; projectTags.value=''; projectName.focus(); });
-    document.getElementById('modalClose').addEventListener('click', () => projectModal.classList.add('hidden'));
-    document.getElementById('btnCancelProject').addEventListener('click', () => projectModal.classList.add('hidden'));
-    document.getElementById('btnSaveProject').addEventListener('click', () => {
-        const name = projectName.value.trim(); if(!name) { projectName.style.borderColor='#ff6b6b'; return; }
-        projects.push({ name, desc: projectDesc.value.trim(), tech: projectTech.value, tags: projectTags.value.split(',').filter(t=>t.trim()), date: new Date().toISOString() });
-        saveProjects(); renderProjects(); projectModal.classList.add('hidden');
-    });
-    projectModal.addEventListener('click', e => { if(e.target===projectModal) projectModal.classList.add('hidden'); });
-    loadProjects();
+    // ===== CRIAÇÃO: CANTADAS =====
+    const cantadas = [
+        "Você é açaí? Porque sem você, meu dia não tem graça! 🫐",
+        "Se beleza fosse crime, você pegaria prisão perpétua! 😏",
+        "Você é tapioca? Porque eu quero te recheear de carinho! 🫓",
+        "Seu sorriso é igual Carne de Sol — impossível de resistir! 🥩",
+        "Você é o Maracanã? Porque todo mundo quer entrar em você! 😂⚽",
+        "Você é caranguejo? Porque me pegou pelas pinças! 🦞",
+        "Seu amor é como o açaí — doce, forte e viciante! 🫐",
+        "Você é leite Ninho? Porque derreteu meu coração! 🥛",
+        "Se você fosse praia, eu seria o mar — sempre perto de você! 🏖️",
+        "Você é bolinho de goma? Porque é impossível resistir! 🧆",
+        "Seu olhar é como o pôr do sol em Natal — lindo demais! 🌅",
+        "Você é cajuzinho? Porque é doce e todo mundo quer um! 🍫",
+        "Se fosses uma fruta, seria açaí — porque me dá energia pro dia inteiro! ⚡",
+        "Você é como o Flamengo — todo mundo quer, mas poucos conseguem! 🔴⚫",
+        "Seu abraço é como a manteiga de garrafa — derrete tudo! 🧈",
+    ];
 
-    // ===== IMAGES =====
+    document.getElementById('btnGerarCantada')?.addEventListener('click', () => {
+        const cantada = cantadas[Math.floor(Math.random() * cantadas.length)];
+        const result = document.getElementById('cantadaResult');
+        result.classList.remove('hidden');
+        result.innerHTML = `<div class="cantada-text">${cantada}</div><button class="btn-action btn-cantada-nova" id="btnNovaCantada">😏 Mais Uma!</button>`;
+        document.getElementById('btnNovaCantada')?.addEventListener('click', () => {
+            const nova = cantadas[Math.floor(Math.random() * cantadas.length)];
+            result.innerHTML = `<div class="cantada-text">${nova}</div><button class="btn-action btn-cantada-nova" id="btnNovaCantada">😏 Mais Uma!</button>`;
+            document.getElementById('btnNovaCantada')?.addEventListener('click', arguments.callee);
+        });
+    });
+
+    // ===== CRIAÇÃO: LETRA CURSIVA =====
+    document.getElementById('btnGerarCursiva')?.addEventListener('click', () => {
+        const texto = document.getElementById('cursivaTexto').value.trim();
+        const tamanho = document.getElementById('cursivaTamanho').value;
+        
+        if (!texto) {
+            document.getElementById('cursivaResult').classList.add('hidden');
+            return;
+        }
+
+        const fontSize = tamanho === 'small' ? '18px' : tamanho === 'medium' ? '28px' : '40px';
+        const lineHeight = tamanho === 'small' ? '40px' : tamanho === 'medium' ? '60px' : '80px';
+        
+        const linhas = texto.split(' ');
+        const result = document.getElementById('cursivaResult');
+        result.classList.remove('hidden');
+        
+        let html = '<div class="cursiva-paper">';
+        // Create lined paper effect
+        const lines = Math.ceil(texto.length / (tamanho === 'small' ? 20 : tamanho === 'medium' ? 12 : 8));
+        for (let i = 0; i < Math.max(lines, 5); i++) {
+            html += `<div class="cursiva-line" style="height: ${lineHeight}; line-height: ${lineHeight}; font-size: ${fontSize};"></div>`;
+        }
+        html += '</div>';
+        html += `<div class="cursiva-display" style="font-family: 'Brush Script MT', 'Segoe Script', 'Dancing Script', cursive; font-size: ${fontSize}; line-height: ${lineHeight}; padding: 20px; background: #fffef5; border-radius: 12px; border: 2px solid #e8e0d0;">`;
+        html += `<p>${texto}</p>`;
+        html += '</div>';
+        html += `<p class="cursiva-tip">✏️ Pratique escrevendo cada palavra na linha de cima, seguindo o modelo!</p>`;
+        
+        result.innerHTML = html;
+    });
+
+    // ===== IMAGENS =====
     const generatedImages = [];
     const imagePrompt = document.getElementById('imagePrompt');
     const btnGenerateImage = document.getElementById('btnGenerateImage');
@@ -409,37 +670,81 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageUpload = document.getElementById('imageUpload');
 
     btnGenerateImage.addEventListener('click', () => {
-        const prompt = imagePrompt.value.trim(); if(!prompt) return;
+        const prompt = imagePrompt.value.trim();
+        if (!prompt) return;
         const size = document.getElementById('imageSize').value;
         const style = document.getElementById('imageStyle').value;
-        const [w,h] = size.split('x').map(Number);
-        const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
+        const [w, h] = size.split('x').map(Number);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
         const ctx = canvas.getContext('2d');
-        const colors = { realistic:['#667eea','#764ba2'], artistic:['#f093fb','#f5576c'], cartoon:['#4facfe','#00f2fe'], pixel:['#43e97b','#38f9d7'], abstract:['#fa709a','#fee140'] };
-        const [c1,c2] = colors[style]||colors.realistic;
-        const gradient = ctx.createLinearGradient(0,0,w,h); gradient.addColorStop(0,c1); gradient.addColorStop(1,c2);
-        ctx.fillStyle=gradient; ctx.fillRect(0,0,w,h);
-        for(let i=0;i<20;i++){ctx.fillStyle=`rgba(255,255,255,${Math.random()*0.3})`;ctx.beginPath();ctx.arc(Math.random()*w,Math.random()*h,Math.random()*80+20,0,Math.PI*2);ctx.fill();}
-        ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.font=`bold ${Math.min(w,h)/8}px Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText('Nova IA',w/2,h/2-30); ctx.font=`${Math.min(w,h)/16}px Arial`; ctx.fillText(style.charAt(0).toUpperCase()+style.slice(1),w/2,h/2+20);
+        const colors = {
+            realistic: ['#667eea', '#764ba2'],
+            artistic: ['#f093fb', '#f5576c'],
+            cartoon: ['#4facfe', '#00f2fe'],
+            pixel: ['#43e97b', '#38f9d7'],
+            abstract: ['#fa709a', '#fee140']
+        };
+        const [c1, c2] = colors[style] || colors.realistic;
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, c1);
+        gradient.addColorStop(1, c2);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 20; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+            ctx.beginPath();
+            ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 80 + 20, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.font = `bold ${Math.min(w, h) / 8}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Potiguar IA', w / 2, h / 2 - 30);
+        ctx.font = `${Math.min(w, h) / 16}px Arial`;
+        ctx.fillText(style.charAt(0).toUpperCase() + style.slice(1), w / 2, h / 2 + 20);
         generatedImages.push({ dataUrl: canvas.toDataURL('image/png'), prompt, style, date: new Date() });
-        renderGallery(); imagePrompt.value='';
+        renderGallery();
+        imagePrompt.value = '';
     });
 
     function renderGallery() {
-        galleryGrid.innerHTML='';
-        if(generatedImages.length===0){emptyGallery.classList.remove('hidden');return;}
+        galleryGrid.innerHTML = '';
+        if (generatedImages.length === 0) { emptyGallery.classList.remove('hidden'); return; }
         emptyGallery.classList.add('hidden');
-        generatedImages.forEach((img,i)=>{const item=document.createElement('div');item.className='gallery-item';item.innerHTML=`<img src="${img.dataUrl}" alt="${img.prompt}" title="${img.prompt}">`;item.addEventListener('click',()=>{const a=document.createElement('a');a.href=img.dataUrl;a.download=`nova-ia-${i}.png`;a.click();});galleryGrid.appendChild(item);});
+        generatedImages.forEach((img, i) => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.innerHTML = `<img src="${img.dataUrl}" alt="${img.prompt}" title="${img.prompt}">`;
+            item.addEventListener('click', () => {
+                const a = document.createElement('a');
+                a.href = img.dataUrl;
+                a.download = `potiguar-ia-${i}.png`;
+                a.click();
+            });
+            galleryGrid.appendChild(item);
+        });
     }
 
-    dropZone.addEventListener('click', ()=>imageUpload.click());
-    dropZone.addEventListener('dragover', e=>{e.preventDefault();dropZone.style.borderColor='var(--accent)';});
-    dropZone.addEventListener('dragleave', ()=>{dropZone.style.borderColor='var(--border)';});
-    dropZone.addEventListener('drop', e=>{e.preventDefault();dropZone.style.borderColor='var(--border)';handleImageFiles(e.dataTransfer.files);});
-    imageUpload.addEventListener('change', e=>handleImageFiles(e.target.files));
+    dropZone.addEventListener('click', () => imageUpload.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var(--border)'; });
+    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.style.borderColor = 'var(--border)'; handleImageFiles(e.dataTransfer.files); });
+    imageUpload.addEventListener('change', e => handleImageFiles(e.target.files));
 
-    function handleImageFiles(files) { Array.from(files).forEach(f=>{if(!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=e=>{generatedImages.push({dataUrl:e.target.result,prompt:f.name,style:'upload',date:new Date()});renderGallery();};r.readAsDataURL(f);}); }
+    function handleImageFiles(files) {
+        Array.from(files).forEach(f => {
+            if (!f.type.startsWith('image/')) return;
+            const r = new FileReader();
+            r.onload = e => {
+                generatedImages.push({ dataUrl: e.target.result, prompt: f.name, style: 'upload', date: new Date() });
+                renderGallery();
+            };
+            r.readAsDataURL(f);
+        });
+    }
     renderGallery();
 
     // ===== CAMERA =====
@@ -465,24 +770,33 @@ document.addEventListener('DOMContentLoaded', () => {
             btnCapture.classList.remove('hidden');
             btnSwitchCamera.classList.remove('hidden');
             btnStartCamera.textContent = '⏹ Parar Câmera';
-        } catch(err) { cameraOverlay.classList.remove('hidden'); cameraVideo.classList.add('hidden'); }
+        } catch (err) {
+            cameraOverlay.classList.remove('hidden');
+            cameraVideo.classList.add('hidden');
+        }
     }
 
     function stopCamera() {
-        if(currentStream) { currentStream.getTracks().forEach(t=>t.stop()); currentStream=null; }
-        cameraVideo.srcObject=null; cameraVideo.classList.add('hidden');
-        btnCapture.classList.add('hidden'); btnSwitchCamera.classList.add('hidden');
+        if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
+        cameraVideo.srcObject = null;
+        cameraVideo.classList.add('hidden');
+        btnCapture.classList.add('hidden');
+        btnSwitchCamera.classList.add('hidden');
         btnStartCamera.textContent = '▶ Ligar Câmera';
     }
 
-    btnSwitchCamera.addEventListener('click', () => { facingMode = facingMode==='user'?'environment':'user'; if(currentStream){stopCamera();startCamera();} });
+    btnSwitchCamera.addEventListener('click', () => { facingMode = facingMode === 'user' ? 'environment' : 'user'; if (currentStream) { stopCamera(); startCamera(); } });
     btnCapture.addEventListener('click', () => {
-        if(!currentStream) return;
-        cameraCanvas.width=cameraVideo.videoWidth; cameraCanvas.height=cameraVideo.videoHeight;
-        cameraCanvas.getContext('2d').drawImage(cameraVideo,0,0);
-        const photo=document.createElement('div'); photo.className='photo-item';
-        photo.innerHTML=`<img src="${cameraCanvas.toDataURL('image/png')}" alt="Foto">`;
-        photosGrid.appendChild(photo); emptyPhotos.classList.add('hidden'); photosGrid.classList.remove('hidden');
+        if (!currentStream) return;
+        cameraCanvas.width = cameraVideo.videoWidth;
+        cameraCanvas.height = cameraVideo.videoHeight;
+        cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0);
+        const photo = document.createElement('div');
+        photo.className = 'photo-item';
+        photo.innerHTML = `<img src="${cameraCanvas.toDataURL('image/png')}" alt="Foto">`;
+        photosGrid.appendChild(photo);
+        emptyPhotos.classList.add('hidden');
+        photosGrid.classList.remove('hidden');
     });
 
     // Init
