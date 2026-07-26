@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potiguar IA — Teu Parceiro de Todas as Horas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e63946;
+            --primary-light: #ff4d5a;
+            --primary-dark: #c1121f;
+            --accent: #00cec9;
+            --bg-dark: #0a0a0f;
+            --bg-card: #141420;
+            --bg-card-hover: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6c6c7e;
+            --border: #2a2a3e;
+            --gradient: linear-gradient(135deg, #e63946, #ff6b6b, #fd79a8);
+            --shadow: 0 8px 32px rgba(230, 57, 70, 0.15);
+            --radius: 16px;
+            --radius-lg: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(42, 42, 62, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 24px;
+            background: rgba(10, 10, 15, 0.95);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-logo-icon { font-size: 28px; }
+
+        .nav-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .nav-cta {
+            padding: 10px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(230, 57, 70, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(253, 121, 168, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0, 206, 201, 0.06) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            border-radius: 30px;
+            font-size: 13px;
+            color: var(--primary-light);
+            margin-bottom: 24px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-emoji { font-size: 48px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+
+        .hero-title {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-title span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn-primary {
+            padding: 16px 36px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 16px 36px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            padding: 100px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid rgba(230, 57, 70, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(230, 57, 70, 0.3);
+            box-shadow: 0 20px 60px rgba(230, 57, 70, 0.1);
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px;
+        }
+
+        .feature-tag {
+            padding: 4px 12px;
+            background: rgba(230, 57, 70, 0.08);
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ===== SHOWCASE ===== */
+        .showcase {
+            padding: 100px 24px;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(20, 20, 32, 0.8) 100%);
+        }
+
+        .showcase-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .showcase-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .showcase-item:hover {
+            transform: scale(1.03);
+            border-color: rgba(230, 57, 70, 0.3);
+        }
+
+        .showcase-preview {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+
+        .showcase-preview.futebol { background: linear-gradient(135deg, rgba(230, 57, 70, 0.15), rgba(193, 18, 31, 0.1)); }
+        .showcase-preview.jogos { background: linear-gradient(135deg, rgba(0, 206, 201, 0.15), rgba(0, 206, 201, 0.05)); }
+        .showcase-preview.programacao { background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(108, 92, 231, 0.05)); }
+        .showcase-preview.criacao { background: linear-gradient(135deg, rgba(253, 121, 168, 0.15), rgba(253, 121, 168, 0.05)); }
+        .showcase-preview.culinaria { background: linear-gradient(135deg, rgba(253, 203, 110, 0.15), rgba(253, 203, 110, 0.05)); }
+        .showcase-preview.chat { background: linear-gradient(135deg, rgba(116, 185, 255, 0.15), rgba(116, 185, 255, 0.05)); }
+
+        .showcase-info {
+            padding: 20px;
+        }
+
+        .showcase-info h4 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .showcase-info p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* ===== TECH STACK ===== */
+        .tech-section {
+            padding: 80px 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 100px;
+            transition: all 0.3s;
+        }
+
+        .tech-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .tech-item span:first-child { font-size: 28px; }
+        .tech-item span:last-child { font-size: 12px; color: var(--text-muted); }
+
+        /* ===== CTA ===== */
+        .cta-section {
+            padding: 100px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(230, 57, 70, 0.08) 0%, transparent 70%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-content p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover { color: var(--primary); }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-menu-btn { display: block; }
+            .hero-stats { gap: 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .showcase-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .tech-stack { gap: 16px; }
+        }
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 15, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .mobile-menu.active { display: flex; }
+
+        .mobile-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: color 0.3s;
+        }
+
+        .mobile-menu a:hover { color: var(--primary); }
+
+        .mobile-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <span class="nav-logo-icon">🦞</span>
+            <span class="nav-logo-text">Potiguar IA</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">Funcionalidades</a></li>
+            <li><a href="#showcase">Preview</a></li>
+            <li><a href="#tech">Tecnologias</a></li>
+        </ul>
+        <a href="https://pedrodeoliveirapaixaoj-glitch.github.io/shiny-chainsaw/" class="nav-cta" target="_blank">Abrir App</a>
+        <button class="nav-menu-btn" onclick="toggleMobile()">☰</button>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close" onclick="toggleMobile()">✕</button>
+        <a href="#features" onclick="toggleMobile()">Funcionalidades</a>
+        <a href="#showcase" onclick="toggleMobile()">Preview</a>
+        <a href="#tech" onclick="toggleMobile()">Tecnologias</a>
+        <a href="https://pedrodeoliveirapaixaoj-glitch.github.io/shiny-chainsaw/" class="nav-cta" target="_blank">Abrir App</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>🚀</span>
+                <span>Versão 1.0 — Disponível Agora</span>
+            </div>
+            <div class="hero-emoji">🦞</div>
+            <h1 class="hero-title">
+                O <span>Potiguar IA</span><br>Teu Parceiro de Todas as Horas
+            </h1>
+            <p class="hero-subtitle">
+                Futebol, jogos, programação, criação, culinária e muito mais. Tudo num só app, com o jeito potiguar de ser!
+            </p>
+            <div class="hero-buttons">
+                <a href="https://pedrodeoliveirapaixaoj-glitch.github.io/shiny-chainsaw/" class="btn-primary" target="_blank">
+                    🚀 Usar Agora
+                </a>
+                <a href="#features" class="btn-secondary">
+                    ✨ Ver Funcionalidades
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Seções Completas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Gratuito</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Instalação</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="section-header reveal">
+            <span class="section-label">Funcionalidades</span>
+            <h2 class="section-title">Tudo que Tu Precisa, Num Só App</h2>
+            <p class="section-desc">Do futebol à programação, da culinária às cantadas — o Potiguar IA tem tudo!</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">🤝</div>
+                <h3>Amigo de Verdade</h3>
+                <p>Brinca, conta piadas, faz adivinhas e responde do jeito que tu gosta. Teu parceiro pra qualquer hora do dia!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Piadas</span>
+                    <span class="feature-tag">Adivinhas</span>
+                    <span class="feature-tag">Cantadas</span>
+                    <span class="feature-tag">Conversa</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">⚽</div>
+                <h3>Área de Futebol</h3>
+                <p>Narrações épicas de gol, tudo sobre Flamengo, Vini Júnior e quiz de times brasileiros pra testar seus conhecimentos!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Narração</span>
+                    <span class="feature-tag">Flamengo</span>
+                    <span class="feature-tag">Vini Jr</span>
+                    <span class="feature-tag">Quiz</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">🎮</div>
+                <h3>Parceiro de Jogos</h3>
+                <p>Dicas de Free Fire, truques de Blox Fruits, ajuda com Roblox e estratégias de Fortnite. Domine todos os jogos!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Free Fire</span>
+                    <span class="feature-tag">Blox Fruits</span>
+                    <span class="feature-tag">Roblox</span>
+                    <span class="feature-tag">Fortnite</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">💻</div>
+                <h3>Programação Fácil</h3>
+                <p>Códigos prontos, explicação simples, sem complicações. Editor com preview ao vivo e 10 exemplos prontos!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">HTML</span>
+                    <span class="feature-tag">CSS</span>
+                    <span class="feature-tag">JavaScript</span>
+                    <span class="feature-tag">Preview</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">✍️</div>
+                <h3>Criação</h3>
+                <p>Letras de música, rimas, cantadas e ajuda pra praticar letra cursiva. Liberdade criativa sem limites!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Música</span>
+                    <span class="feature-tag">Rimas</span>
+                    <span class="feature-tag">Cantadas</span>
+                    <span class="feature-tag">Cursiva</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">🍴</div>
+                <h3>Coisas da Terra</h3>
+                <p>Receitas fáceis de açaí, leite ninho, tapioca, carne de sol e comidas típicas do Rio Grande do Norte!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Açaí</span>
+                    <span class="feature-tag">Tapioca</span>
+                    <span class="feature-tag">Carne de Sol</span>
+                    <span class="feature-tag">Bolinho</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">🖼️</div>
+                <h3>Imagens</h3>
+                <p>Gere imagens com diferentes estilos, faça upload e organize sua galeria pessoal direto no app!</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Gerador</span>
+                    <span class="feature-tag">Upload</span>
+                    <span class="feature-tag">Galeria</span>
+                    <span class="feature-tag">Estilos</span>
+                </div>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">📷</div>
+                <h3>Câmera</h3>
+                <p>Tire fotos direto pelo app! Funciona com câmera frontal e traseira, com galeria integrada.</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">Frontal</span>
+                    <span class="feature-tag">Traseira</span>
+                    <span class="feature-tag">Captura</span>
+                    <span class="feature-tag">Galeria</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOWCASE -->
+    <section class="showcase" id="showcase">
+        <div class="showcase-container">
+            <div class="section-header reveal">
+                <span class="section-label">Preview</span>
+                <h2 class="section-title">Veja o Potiguar IA em Ação</h2>
+                <p class="section-desc">Cada seção foi pensada pra ser útil, divertida e fácil de usar.</p>
+            </div>
+
+            <div class="showcase-grid">
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview futebol">⚽</div>
+                    <div class="showcase-info">
+                        <h4>Narração de Gol</h4>
+                        <p>Gera narrações épicas de gol com emoção pura!</p>
+                    </div>
+                </div>
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview jogos">🎮</div>
+                    <div class="showcase-info">
+                        <h4>Dicas de Jogos</h4>
+                        <p>Estratégias pra dominar Free Fire, Fortnite e mais!</p>
+                    </div>
+                </div>
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview programacao">💻</div>
+                    <div class="showcase-info">
+                        <h4>Editor de Código</h4>
+                        <p>HTML, CSS e JS com preview em tempo real!</p>
+                    </div>
+                </div>
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview criacao">✍️</div>
+                    <div class="showcase-info">
+                        <h4>Gerador de Letras</h4>
+                        <p>Crie músicas no estilo sertanejo, funk, rap e mais!</p>
+                    </div>
+                </div>
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview culinaria">🍴</div>
+                    <div class="showcase-info">
+                        <h4>Receitas do RN</h4>
+                        <p>Carne de sol, bolinho de goma, tapioca e muito mais!</p>
+                    </div>
+                </div>
+                <div class="showcase-item reveal">
+                    <div class="showcase-preview chat">🤝</div>
+                    <div class="showcase-info">
+                        <h4>Chat Potiguar</h4>
+                        <p>Conversa divertida com piadas, adivinhas e cantadas!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH STACK -->
+    <section class="tech-section" id="tech">
+        <div class="section-header reveal">
+            <span class="section-label">Tecnologias</span>
+            <h2 class="section-title">Feito com as Melhores Tecnologias</h2>
+            <p class="section-desc">Simples, rápido e funciona em qualquer dispositivo.</p>
+        </div>
+        <div class="tech-stack reveal">
+            <div class="tech-item">
+                <span>🌐</span>
+                <span>HTML5</span>
+            </div>
+            <div class="tech-item">
+                <span>🎨</span>
+                <span>CSS3</span>
+            </div>
+            <div class="tech-item">
+                <span>⚡</span>
+                <span>JavaScript</span>
+            </div>
+            <div class="tech-item">
+                <span>📱</span>
+                <span>Responsivo</span>
+            </div>
+            <div class="tech-item">
+                <span>🔒</span>
+                <span>Seguro</span>
+            </div>
+            <div class="tech-item">
+                <span>🆓</span>
+                <span>Gratuito</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-content reveal">
+            <h2>Bora Usar o <span style="background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Potiguar IA</span>?</h2>
+            <p>Abre o app agora e descobre tudo que ele pode fazer por você! Funciona no celular, tablet e computador.</p>
+            <a href="https://pedrodeoliveirapaixaoj-glitch.github.io/shiny-chainsaw/" class="btn-primary" target="_blank">
+                🚀 Abrir Potiguar IA
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>🦞</span>
+                <span>Potiguar IA</span>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/pedrodeoliveirapaixaoj-glitch/shiny-chainsaw" target="_blank">GitHub</a>
+                <a href="https://github.com/pedrodeoliveirapaixaoj-glitch/App" target="_blank">Repositório</a>
+                <a href="#features">Funcionalidades</a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2024 Potiguar IA. Feito com ❤️ no RN.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Mobile menu
+        function toggleMobile() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
