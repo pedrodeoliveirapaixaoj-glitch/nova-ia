@@ -6,11 +6,87 @@
     <title>Nova IA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
+
+    <!-- ===== PERMISSIONS SCREEN ===== -->
+    <div class="permissions-screen" id="permissionsScreen">
+        <div class="permissions-container">
+            <div class="permissions-logo">✦</div>
+            <h1 class="permissions-title">Bem-vindo ao Nova IA! 🎉</h1>
+            <p class="permissions-subtitle">Prazer em te conhecer! Antes de começar, preciso de algumas permissões para funcionar 100% 😄</p>
+
+            <div class="permissions-list">
+                <div class="permission-item" data-perm="camera">
+                    <div class="perm-icon">📷</div>
+                    <div class="perm-info">
+                        <span class="perm-name">Câmera</span>
+                        <span class="perm-desc">Para tirar fotos e usar a câmera do app</span>
+                    </div>
+                    <label class="perm-toggle">
+                        <input type="checkbox" checked class="perm-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="permission-item" data-perm="location">
+                    <div class="perm-icon">📍</div>
+                    <div class="perm-info">
+                        <span class="perm-name">Localização</span>
+                        <span class="perm-desc">Para features futuras de localização</span>
+                    </div>
+                    <label class="perm-toggle">
+                        <input type="checkbox" class="perm-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="permission-item" data-perm="notifications">
+                    <div class="perm-icon">🔔</div>
+                    <div class="perm-info">
+                        <span class="perm-name">Notificações</span>
+                        <span class="perm-desc">Para receber alertas e lembretes</span>
+                    </div>
+                    <label class="perm-toggle">
+                        <input type="checkbox" class="perm-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="permission-item" data-perm="storage">
+                    <div class="perm-icon">💾</div>
+                    <div class="perm-info">
+                        <span class="perm-name">Armazenamento</span>
+                        <span class="perm-desc">Para salvar fotos, projetos e dados</span>
+                    </div>
+                    <label class="perm-toggle">
+                        <input type="checkbox" checked class="perm-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="permission-item" data-perm="microphone">
+                    <div class="perm-icon">🎤</div>
+                    <div class="perm-info">
+                        <span class="perm-name">Microfone</span>
+                        <span class="perm-desc">Para comandos de voz no futuro</span>
+                    </div>
+                    <label class="perm-toggle">
+                        <input type="checkbox" class="perm-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-permissions" id="btnAllowPermissions">🚀 Vamos lá! Aceitar e Começar</button>
+            <p class="permissions-note">Você pode mudar isso a qualquer momento nas configurações 😉</p>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div class="app-container hidden" id="appContainer">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -20,11 +96,14 @@
                 </div>
             </div>
 
-            <!-- Navigation Menu -->
             <nav class="sidebar-nav">
                 <button class="nav-btn active" data-section="chat" title="Chat IA">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     <span>Chat IA</span>
+                </button>
+                <button class="nav-btn" data-section="bola" title="Como Jogar Bola">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>
+                    <span>⚽ Jogar Bola</span>
                 </button>
                 <button class="nav-btn" data-section="programming" title="Programação">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
@@ -46,8 +125,8 @@
 
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <div class="user-avatar">👤</div>
-                    <span class="user-name">Usuário</span>
+                    <div class="user-avatar">😎</div>
+                    <span class="user-name">Mestre</span>
                 </div>
             </div>
         </aside>
@@ -57,32 +136,30 @@
 
             <!-- ===== CHAT SECTION ===== -->
             <section class="content-section active" id="section-chat">
-                <!-- Welcome Screen -->
                 <div class="welcome-screen" id="welcomeScreen">
                     <div class="welcome-icon">✦</div>
                     <h1 class="welcome-title">Nova IA</h1>
-                    <p class="welcome-subtitle">Seu assistente inteligente. Como posso ajudar você hoje?</p>
+                    <p class="welcome-subtitle">Fala, beleza? 👋 Sou a Nova IA, tua parceira de jornada! Bora conversar?</p>
                     <div class="suggestions">
-                        <button class="suggestion-btn" data-prompt="Explique o que é inteligência artificial">
-                            <span class="suggestion-icon">💡</span>
-                            <span class="suggestion-text">Explique o que é inteligência artificial</span>
+                        <button class="suggestion-btn" data-prompt="Me conta algo interessante!">
+                            <span class="suggestion-icon">🤩</span>
+                            <span class="suggestion-text">Me conta algo interessante!</span>
                         </button>
-                        <button class="suggestion-btn" data-prompt="Me ajude a escrever um e-mail profissional">
-                            <span class="suggestion-icon">✉️</span>
-                            <span class="suggestion-text">Me ajude a escrever um e-mail profissional</span>
+                        <button class="suggestion-btn" data-prompt="Me ajuda a escrever uma mensagem maneiro">
+                            <span class="suggestion-icon">✍️</span>
+                            <span class="suggestion-text">Me ajuda a escrever algo maneiro</span>
                         </button>
-                        <button class="suggestion-btn" data-prompt="Crie um plano de estudos para programação">
-                            <span class="suggestion-icon">📚</span>
-                            <span class="suggestion-text">Crie um plano de estudos para programação</span>
+                        <button class="suggestion-btn" data-prompt="Quero aprender a programar!">
+                            <span class="suggestion-icon">💻</span>
+                            <span class="suggestion-text">Quero aprender a programar!</span>
                         </button>
-                        <button class="suggestion-btn" data-prompt="Dicas para ser mais produtivo no trabalho">
-                            <span class="suggestion-icon">🚀</span>
-                            <span class="suggestion-text">Dicas para ser mais produtivo no trabalho</span>
+                        <button class="suggestion-btn" data-prompt="Me dá dicas pra ser mais produtivo">
+                            <span class="suggestion-icon">🔥</span>
+                            <span class="suggestion-text">Dicas pra ser mais produtivo</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Chat Container -->
                 <div class="chat-container hidden" id="chatContainer">
                     <div class="messages" id="messages"></div>
                     <div class="typing-indicator hidden" id="typingIndicator">
@@ -92,15 +169,124 @@
                     </div>
                 </div>
 
-                <!-- Chat Input -->
                 <div class="input-area" id="inputArea">
                     <div class="input-wrapper">
-                        <textarea id="messageInput" class="message-input" placeholder="Envie uma mensagem para a Nova IA..." rows="1" maxlength="4000"></textarea>
+                        <textarea id="messageInput" class="message-input" placeholder="Fala aí, o que tu precisa? 😎" rows="1" maxlength="4000"></textarea>
                         <button class="btn-send" id="btnSend" disabled>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </div>
-                    <p class="input-disclaimer">Nova IA pode cometer erros. Verifique informações importantes.</p>
+                    <p class="input-disclaimer">Nova IA é gente boa, mas pode errar. Confere aí! 😉</p>
+                </div>
+            </section>
+
+            <!-- ===== BOLA / FOOTBALL SECTION ===== -->
+            <section class="content-section" id="section-bola">
+                <div class="section-header">
+                    <h2>⚽ Como Jogar Bola</h2>
+                    <p class="section-subtitle">O guia definitivo pra você virar craque! Sem enrolação 🏆</p>
+                </div>
+
+                <div class="bola-content">
+                    <!-- Step-by-step Tutorial -->
+                    <div class="tutorial-steps">
+                        <div class="tutorial-step" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>🦶 O Básico: Chutar a Bola</h3>
+                                <p>A primeira coisa é aprender a chutar sem tropeçar na bola! Coloca o pé de apoio ao lado da bola, mira com o peito do pé e chuta com força (mas sem exagero, senão voa pro terreno baldio 😂).</p>
+                                <div class="step-tip">💡 <strong>Dica de ouro:</strong> Olha pra onde quer que a bola vá ANTES de chutar. Parece óbvio, mas muita gente chuta e olha depois!</div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>🏃 Correr com a Bola (Drible)</h3>
+                                <p>Correr com a bola no pé é tipo andar de skate — no começo parece impossível, mas depois vira automático! Toca a bola devagar com o pé, dá uns passos, toca de novo. Vai aumentando a velocidade aos poucos.</p>
+                                <div class="step-tip">💡 <strong>Truque secreto:</strong> Dribla mais rápido que o adversário correndo devagar com a bola. Não precisa ser o Mbappé!</div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>🎯 Passar a Bola pro Amigo</h3>
+                                <p>Futebol é jogo de equipe, meu parceiro! Passar a bola é mais importante que fazer gol (às vezes 😅). Usa a parte de dentro do pé pra passar com precisão. Mira no peito do pé do seu amigo — não no pé dele!</p>
+                                <div class="step-tip">💡 <strong>Regra de vida:</strong> Quem passa bem, joga bem. Messi é mestre nisso!</div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h3>🧱 Defender (Sem Chorar)</h3>
+                                <p>Defender é arte! Fica de frente pro atacante, fica nas pontas dos pés e tenta roubar a bola sem derrubar o cara. Se não der, pelo menos atrapalha. E NUNCA coloca a mão na bola (a não ser que seja goleiro 🧤).</p>
+                                <div class="step-tip">💡 <strong>Segredo dos zagueiros:</strong> Paciência! Não sai entrando em tudo. Espera o momento certo!</div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step" data-step="5">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <h3>🥅 Chutar no Gol (O Momento da Glória!)</h3>
+                                <p>CHEGOU A HORA! Quando tiver cara a cara com o goleiro: respira fundo, olha pro canto do gol e chuta COM CONVICÇÃO. Não tenta fazer firula — manda aquela bolada e comemora como se fosse a final da Champions! 🎉</p>
+                                <div class="step-tip">💡 <strong>Dica do Neymar:</strong> Se errar, faz cara de quem queria fazer aquilo mesmo. Funciona 100% das vezes 😂</div>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step" data-step="6">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <h3>🧠 Mentalidade de Campeão</h3>
+                                <p>O mais importante de tudo: DIVERTE-SE! Futebol é alegria. Se você tá se divertindo, joga melhor. Se perdeu a bola, ri e vai de novo. Se tomou um golaço, aplaude o adversário. E nunca, NUNCA, desiste antes do apito final!</p>
+                                <div class="step-tip">💡 <strong>Filosofia do Nova IA:</strong> A vida é como futebol — às vezes você chuta e entra, às vezes chuta e vai pra fora. O importante é continuar chutando! ⚽💜</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fun Facts -->
+                    <div class="fun-facts">
+                        <h3>🎪 Curiosidades pra Impressionar a Galera</h3>
+                        <div class="facts-grid">
+                            <div class="fact-card">
+                                <span class="fact-emoji">🐐</span>
+                                <h4>Messi ou CR7?</h4>
+                                <p>Depende do dia! Mas os dois são absurdos. Escolhe um e defende com a vida 😤</p>
+                            </div>
+                            <div class="fact-card">
+                                <span class="fact-emoji">🌍</span>
+                                <h4>Futebol é universal</h4>
+                                <p>Mais de 4 bilhões de pessoas acompanham futebol no mundo. É o esporte #1 do planeta!</p>
+                            </div>
+                            <div class="fact-card">
+                                <span class="fact-emoji">🏆</span>
+                                <h4>Brasil = 5 estrelas</h4>
+                                <p>O Brasil é o único país com 5 títulos de Copa do Mundo. Isso não é orgulho, é FATO!</p>
+                            </div>
+                            <div class="fact-card">
+                                <span class="fact-emoji">⚡</span>
+                                <h4>Velocidade recorde</h4>
+                                <p>A bola mais rápida registrada foi a 210 km/h! Quem chutou? Nem sabemos, mas doeu.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Quiz -->
+                    <div class="quiz-section">
+                        <h3>🧩 Quiz Rápido: Você Sabe de Bola?</h3>
+                        <div class="quiz-container" id="quizContainer">
+                            <div class="quiz-question" id="quizQuestion">Quem ganhou a última Copa do Mundo (2022)?</div>
+                            <div class="quiz-options" id="quizOptions">
+                                <button class="quiz-option" data-answer="wrong">Brasil</button>
+                                <button class="quiz-option" data-answer="wrong">França</button>
+                                <button class="quiz-option" data-answer="correct">Argentina</button>
+                                <button class="quiz-option" data-answer="wrong">Alemanha</button>
+                            </div>
+                            <div class="quiz-result hidden" id="quizResult"></div>
+                            <button class="btn-next-quiz hidden" id="btnNextQuiz">Próxima Pergunta →</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -108,11 +294,10 @@
             <section class="content-section" id="section-programming">
                 <div class="section-header">
                     <h2>💻 Programação</h2>
-                    <p class="section-subtitle">Editor de código HTML, CSS e JavaScript com preview em tempo real</p>
+                    <p class="section-subtitle">Editor de código com preview ao vivo. Bora criar! 🚀</p>
                 </div>
 
                 <div class="code-workspace">
-                    <!-- Code Editor Tabs -->
                     <div class="editor-container">
                         <div class="editor-tabs">
                             <button class="editor-tab active" data-tab="html">HTML</button>
@@ -120,41 +305,18 @@
                             <button class="editor-tab" data-tab="js">JavaScript</button>
                         </div>
                         <div class="editor-body">
-                            <textarea class="code-editor active" id="editor-html" spellcheck="false" placeholder="<!DOCTYPE html>
-<html>
-<head>
-    <title>Meu Projeto</title>
-</head>
-<body>
-    <h1>Olá Mundo!</h1>
-</body>
-</html>"></textarea>
-                            <textarea class="code-editor" id="editor-css" spellcheck="false" placeholder="body {
-    font-family: Arial;
-    background: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-h1 {
-    color: #333;
-    font-size: 2rem;
-}"></textarea>
-                            <textarea class="code-editor" id="editor-js" spellcheck="false" placeholder="// Seu código JavaScript
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Olá do Nova IA!');
-});"></textarea>
+                            <textarea class="code-editor active" id="editor-html" spellcheck="false" placeholder="<!-- Escreve teu HTML aqui! -->
+<h1>Meu site maneiro 🚀</h1>"></textarea>
+                            <textarea class="code-editor" id="editor-css" spellcheck="false" placeholder="/* Teu CSS aqui! */
+h1 { color: #6c5ce7; font-family: Arial; }"></textarea>
+                            <textarea class="code-editor" id="editor-js" spellcheck="false" placeholder="// Teu JavaScript aqui!
+console.log('Bora codar! 💜');"></textarea>
                         </div>
                         <div class="editor-actions">
                             <button class="btn-run" id="btnRunCode">▶ Executar</button>
                             <button class="btn-clear" id="btnClearCode">🗑 Limpar</button>
                         </div>
                     </div>
-
-                    <!-- Preview Panel -->
                     <div class="preview-container">
                         <div class="preview-header">
                             <span>🔍 Preview</span>
@@ -168,20 +330,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <!-- Code Snippets -->
                 <div class="snippets-section">
-                    <h3>Exemplos Rápidos</h3>
+                    <h3>⚡ Exemplos Rápidos (clica e vê a mágica!)</h3>
                     <div class="snippets-grid">
                         <button class="snippet-btn" data-type="html" data-code="basic">📄 HTML Básico</button>
                         <button class="snippet-btn" data-type="html" data-code="form">📋 Formulário</button>
-                        <button class="snippet-btn" data-type="css" data-code="flexbox">🎨 Flexbox Layout</button>
-                        <button class="snippet-btn" data-type="css" data-code="animation">✨ Animação CSS</button>
+                        <button class="snippet-btn" data-type="css" data-code="flexbox">🎨 Flexbox</button>
+                        <button class="snippet-btn" data-type="css" data-code="animation">✨ Animação</button>
                         <button class="snippet-btn" data-type="js" data-code="fetch">🌐 Fetch API</button>
                         <button class="snippet-btn" data-type="js" data-code="dom">🎯 Manipulação DOM</button>
-                        <button class="snippet-btn" data-type="full" data-code="card">🃏 Card Component</button>
-                        <button class="snippet-btn" data-type="full" data-code="todo">✅ Todo List App</button>
+                        <button class="snippet-btn" data-type="full" data-code="card">🃏 Card Bonito</button>
+                        <button class="snippet-btn" data-type="full" data-code="todo">✅ Todo List</button>
                         <button class="snippet-btn" data-type="full" data-code="calculator">🧮 Calculadora</button>
-                        <button class="snippet-btn" data-type="full" data-code="game">🎮 Mini Game</button>
+                        <button class="snippet-btn" data-type="full" data-code="game">🎮 Snake Game</button>
                     </div>
                 </div>
             </section>
@@ -190,18 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <section class="content-section" id="section-projects">
                 <div class="section-header">
                     <h2>📁 Projetos</h2>
-                    <p class="section-subtitle">Gerencie seus projetos e ideias</p>
+                    <p class="section-subtitle">Guarda suas ideias e projetos aqui 💡</p>
                     <button class="btn-add-project" id="btnAddProject">+ Novo Projeto</button>
                 </div>
-
-                <div class="projects-grid" id="projectsGrid">
-                    <!-- Projetos aparecem aqui -->
-                </div>
-
+                <div class="projects-grid" id="projectsGrid"></div>
                 <div class="empty-state hidden" id="emptyProjects">
                     <div class="empty-icon">📁</div>
                     <h3>Nenhum projeto ainda</h3>
-                    <p>Clique em "+ Novo Projeto" para começar</p>
+                    <p>Clica em "+ Novo Projeto" e bora criar algo incrível!</p>
                 </div>
             </section>
 
@@ -209,15 +366,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <section class="content-section" id="section-images">
                 <div class="section-header">
                     <h2>🖼️ Imagens</h2>
-                    <p class="section-subtitle">Gere, edite e organize suas imagens</p>
+                    <p class="section-subtitle">Gere, faça upload e organize suas imagens 🎨</p>
                 </div>
-
                 <div class="image-workspace">
-                    <!-- Image Generator -->
                     <div class="image-generator">
                         <h3>Gerador de Imagens</h3>
                         <div class="generator-input">
-                            <textarea id="imagePrompt" placeholder="Descreva a imagem que deseja gerar..." rows="3"></textarea>
+                            <textarea id="imagePrompt" placeholder="Descreve a imagem que tu quer (ex: um gato astronauta no espaço)..." rows="3"></textarea>
                             <div class="generator-options">
                                 <select id="imageSize">
                                     <option value="512x512">512x512</option>
@@ -235,25 +390,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="btn-generate" id="btnGenerateImage">🎨 Gerar Imagem</button>
                         </div>
                     </div>
-
-                    <!-- Image Gallery -->
                     <div class="image-gallery">
                         <h3>Galeria</h3>
-                        <div class="gallery-grid" id="galleryGrid">
-                            <!-- Imagens geradas aparecem aqui -->
-                        </div>
+                        <div class="gallery-grid" id="galleryGrid"></div>
                         <div class="empty-gallery" id="emptyGallery">
                             <div class="empty-icon">🖼️</div>
-                            <p>Nenhuma imagem gerada ainda</p>
+                            <p>Nenhuma imagem ainda. Gera ou faz upload!</p>
                         </div>
                     </div>
-
-                    <!-- Upload Area -->
                     <div class="upload-area">
-                        <h3>Upload de Imagens</h3>
+                        <h3>Upload</h3>
                         <div class="drop-zone" id="dropZone">
                             <div class="drop-icon">📤</div>
-                            <p>Arraste imagens aqui ou clique para selecionar</p>
+                            <p>Arrasta imagens aqui ou clica pra selecionar</p>
                             <input type="file" id="imageUpload" accept="image/*" multiple hidden>
                         </div>
                     </div>
@@ -264,32 +413,28 @@ document.addEventListener('DOMContentLoaded', () => {
             <section class="content-section" id="section-camera">
                 <div class="section-header">
                     <h2>📷 Câmera</h2>
-                    <p class="section-subtitle">Capture fotos diretamente pelo app</p>
+                    <p class="section-subtitle">Tira fotos direto pelo app! 📸</p>
                 </div>
-
                 <div class="camera-workspace">
                     <div class="camera-viewport">
                         <video id="cameraVideo" autoplay playsinline></video>
                         <canvas id="cameraCanvas" class="hidden"></canvas>
                         <div class="camera-overlay hidden" id="cameraOverlay">
-                            <p>Câmera não disponível</p>
-                            <span>Permita o acesso à câmera nas configurações</span>
+                            <p>Câmera indisponível 😕</p>
+                            <span>Permite o acesso à câmera nas configurações</span>
                         </div>
                     </div>
-
                     <div class="camera-controls">
-                        <button class="btn-camera-action" id="btnStartCamera">▶ Iniciar Câmera</button>
-                        <button class="btn-capture hidden" id="btnCapture">📸 Capturar</button>
-                        <button class="btn-camera-action hidden" id="btnSwitchCamera">🔄 Trocar Câmera</button>
+                        <button class="btn-camera-action" id="btnStartCamera">▶ Ligar Câmera</button>
+                        <button class="btn-capture hidden" id="btnCapture">📸</button>
+                        <button class="btn-camera-action hidden" id="btnSwitchCamera">🔄 Trocar</button>
                     </div>
-
-                    <!-- Photo Gallery -->
                     <div class="photo-gallery">
                         <h3>Fotos Capturadas</h3>
                         <div class="photos-grid" id="photosGrid"></div>
                         <div class="empty-photos" id="emptyPhotos">
                             <div class="empty-icon">📷</div>
-                            <p>Nenhuma foto capturada ainda</p>
+                            <p>Nenhuma foto ainda. Liga a câmera e tira uma!</p>
                         </div>
                     </div>
                 </div>
@@ -298,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <!-- Mobile Menu Toggle -->
-    <button class="menu-toggle" id="menuToggle">
+    <button class="menu-toggle hidden" id="menuToggle">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
 
@@ -306,12 +451,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="modal hidden" id="projectModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Novo Projeto</h3>
+                <h3>Novo Projeto 🚀</h3>
                 <button class="modal-close" id="modalClose">✕</button>
             </div>
             <div class="modal-body">
                 <input type="text" id="projectName" placeholder="Nome do projeto" class="modal-input">
-                <textarea id="projectDesc" placeholder="Descrição do projeto..." class="modal-textarea" rows="4"></textarea>
+                <textarea id="projectDesc" placeholder="O que é esse projeto? Conta aí..." class="modal-textarea" rows="4"></textarea>
                 <select id="projectTech" class="modal-input">
                     <option value="html">HTML/CSS/JS</option>
                     <option value="react">React</option>
@@ -320,13 +465,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="mobile">Mobile App</option>
                     <option value="other">Outro</option>
                 </select>
-                <div class="modal-tags">
-                    <input type="text" id="projectTags" placeholder="Tags (separadas por vírgula)" class="modal-input">
-                </div>
+                <input type="text" id="projectTags" placeholder="Tags (separadas por vírgula)" class="modal-input">
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" id="btnCancelProject">Cancelar</button>
-                <button class="btn-save" id="btnSaveProject">Salvar</button>
+                <button class="btn-save" id="btnSaveProject">💾 Salvar</button>
             </div>
         </div>
     </div>
